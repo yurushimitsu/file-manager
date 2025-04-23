@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\FileController;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,3 +26,15 @@ Route::get('/login', function () {
 Route::get('/dashboard', function () {
     return view('dashboard.main');
 })->name('dashboard');
+
+// Route::get('/documents', function () {
+//     return view('dashboard.documents');
+// })->name('documents');
+
+Route::get('/documents/{folder?}', [FileController::class, 'showDocuments'])->name('documents')->where('folder', '.*');
+Route::get('/trash/{folder?}', [FileController::class, 'showTrash'])->name('trash')->where('folder', '.*');
+
+Route::post('/documents/upload', [FileController::class, 'upload'])->name('upload');
+Route::post('/documents/upload/check', [FileController::class, 'checkIfExists'])->name('upload.check');
+
+Route::post('/move-to-trash', [FileController::class, 'moveToTrash'])->name('moveToTrash');
