@@ -37,4 +37,6 @@ Route::get('/trash/{folder?}', [FileController::class, 'showTrash'])->name('tras
 Route::post('/documents/upload', [FileController::class, 'upload'])->name('upload');
 Route::post('/documents/upload/check', [FileController::class, 'checkIfExists'])->name('upload.check');
 
+Route::post('/documents/create-folder', [FileController::class, 'createFolder'])->name('createFolder');
+
 Route::post('/move-to-trash', [FileController::class, 'moveToTrash'])->name('moveToTrash');

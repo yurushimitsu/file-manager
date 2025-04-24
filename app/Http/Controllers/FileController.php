@@ -133,6 +133,34 @@ class FileController extends Controller
         ]);
     }
 
+    public function createFolder (Request $request) {
+        $request->validate([
+            'folderName' => 'required|string|max:255'
+        ]);
+
+        $referrer = $request->headers->get('referer');
+        $currentFolder = urldecode(parse_url($referrer, PHP_URL_PATH));
+
+        $folderName = $request->input('folderName');        
+        if ($currentFolder == '/dashboard') {
+            $path = storage_path('app/public/documents/' . $folderName);
+        } else {
+            $path = storage_path('app/public'. $currentFolder . '/' . $folderName);
+        }
+
+        // Check if the folder already exists
+        if (File::exists($path)) {
+            return response()->json(['message' => 'Folder already exists'], 400);
+        }
+
+        // Create the folder
+        if (File::makeDirectory($path)) {
+            return response()->json(['message' => 'Folder created successfully'], 200);
+        }
+
+        return response()->json(['message' => 'Failed to create folder'], 500);
+    }
+
     public function moveToTrash(Request $request) {
 
         $referrer = $request->headers->get('referer');
