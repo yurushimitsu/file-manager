@@ -92,6 +92,13 @@
                                                 <div id="docuDropdown-{{ $directory }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
                                                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="docuButton-{{ $directory }}">
                                                         <li><a href="{{ route('documents', ['folder' => str_replace('public/documents/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
+                                                        <li>
+                                                            <a href="{{ route('folders.download', ['folder' => str_replace('public/documents/', '', $directory)]) }}"
+                                                               class="block px-4 py-2 hover:bg-gray-100"
+                                                               onclick="event.stopPropagation();">
+                                                               Download
+                                                            </a>
+                                                        </li>
                                                         <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full">Edit</button></li>
                                                         <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full">Archive</button></li>
                                                         <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToTrash('{{ basename($directory) }}', true)">Trash</button></li>                     
@@ -171,6 +178,7 @@
                                                 <div id="docuDropdownList-{{ $directory }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
                                                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="docuButtonList-{{ $directory }}">
                                                         <li><a href="{{ route('documents', ['folder' => str_replace('public/documents/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
+                                                        <li><a href="{{ route('folders.download', ['folder' => str_replace('public/documents/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100" onclick="event.stopPropagation();">Download</a></li>
                                                         <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full">Edit</button></li>
                                                         <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full">Archive</button></li>
                                                         <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToTrash('{{ basename($directory) }}', true)">Trash</button></li>                     

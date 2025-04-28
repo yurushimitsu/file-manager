@@ -34,6 +34,8 @@ Route::get('/dashboard', function () {
 Route::get('/documents/{folder?}', [FileController::class, 'showDocuments'])->name('documents')->where('folder', '.*');
 Route::get('/trash/{folder?}', [FileController::class, 'showTrash'])->name('trash')->where('folder', '.*');
 
+Route::get('/folders/download', [FileController::class, 'downloadFolder'])->name('folders.download');
+
 Route::post('/documents/upload', [FileController::class, 'upload'])->name('upload');
 Route::post('/documents/upload/check', [FileController::class, 'checkIfExists'])->name('upload.check');
 

@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use ZipArchive;
 
 class FileController extends Controller
 {
@@ -51,6 +52,44 @@ class FileController extends Controller
         }
     
         return view('dashboard.documents', compact('files', 'directories', 'folderSizes', 'folderExploded', 'currentFolder', 'docuFolderFileSize'));
+    }
+
+    public function downloadFolder(Request $request) {
+        $folder = $request->query('folder'); // e.g., "some-folder"
+        $folderPath = storage_path("app/public/documents/{$folder}");
+        $zipDir = storage_path('app/temp');
+        $folderName = basename($folder);
+        $zipFileName = Str::slug($folderName) . '.zip';
+        $zipPath = $zipDir . '/' . $zipFileName;
+
+        // Make sure temp directory exists
+        if (!file_exists($zipDir)) {
+            mkdir($zipDir, 0755, true);
+        }
+
+        if (!file_exists($folderPath)) {
+            abort(404, 'Folder not found.');
+        }
+
+        $zip = new ZipArchive;
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+            $files = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($folderPath),
+                \RecursiveIteratorIterator::LEAVES_ONLY
+            );
+
+            foreach ($files as $name => $file) {
+                if (!$file->isDir()) {
+                    $filePath     = $file->getRealPath();
+                    $relativePath = substr($filePath, strlen($folderPath) + 1);
+                    $zip->addFile($filePath, $relativePath);
+                }
+            }
+
+            $zip->close();
+        }
+
+        return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 
     public function showTrash($folder = null) {
