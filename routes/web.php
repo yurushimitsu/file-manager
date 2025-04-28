@@ -32,6 +32,9 @@ Route::get('/dashboard', function () {
 // })->name('documents');
 
 Route::get('/documents/{folder?}', [FileController::class, 'showDocuments'])->name('documents')->where('folder', '.*');
+// Add this route for handling the file name update
+Route::post('/update-file-name', [FileController::class, 'updateFileName'])->name('update-file-name');
+
 Route::get('/trash/{folder?}', [FileController::class, 'showTrash'])->name('trash')->where('folder', '.*');
 
 Route::get('/folders/download', [FileController::class, 'downloadFolder'])->name('folders.download');

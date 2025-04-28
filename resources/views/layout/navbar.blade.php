@@ -21,7 +21,6 @@
                                 </svg>
                             </div>
                             <input type="search" id="default-search" class="block w-full p-2 ps-10 text-sm text-gray-900 border border-blue-300 rounded-full bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search..." required />
-                            {{-- <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">Search</button> --}}
                         </div>
                     </form>
                 </div>
@@ -32,18 +31,18 @@
                         </svg>
                         Upload
                     </button>
-                    <div id="uploadDropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44">
+                    <div id="uploadDropdown" class="z-20 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44">
                         <ul class="py-2 text-sm text-gray-700" aria-labelledby="profiletButton">
                             <li>
                                 <button id="newFolderButton" class="block w-full text-start cursor-pointer px-4 py-2 hover:bg-gray-100">New Folder</button>
                             </li>
                             <hr class="mx-3 text-gray-300">
                             <li>
-                                <button class="block w-full text-start cursor-pointer px-4 py-2 hover:bg-gray-100">File Upload</button>
+                                <button id="fileUploadButton" class="block w-full text-start cursor-pointer px-4 py-2 hover:bg-gray-100">File Upload</button>
                             </li>
                             <hr class="mx-3 text-gray-300">
                             <li>
-                                <button class="block w-full text-start cursor-pointer px-4 py-2 hover:bg-gray-100">Folder Upload</button>
+                                <button id="folderUploadButton" class="block w-full text-start cursor-pointer px-4 py-2 hover:bg-gray-100">Folder Upload</button>
                             </li>
                         </ul>
                     </div>

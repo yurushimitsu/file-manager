@@ -16,8 +16,13 @@
             <div class="p-1">
                 <div id="drop-zone" class="relative m-5 p-8 bg-[#E8F8FF] rounded-xl min-h-150">
                     <!-- Add this inside your drop zone -->
-                    <div id="drag-overlay" class="absolute inset-0 rounded-xl ring-2 ring-blue-400 bg-blue-50 bg-opacity-75 flex items-center justify-center text-blue-700 font-semibold text-lg hidden z-50">
+                    <div id="drag-overlay" class="absolute inset-0 rounded-xl ring-2 ring-blue-400 bg-blue-50 bg-opacity-75 pt-10 flex justify-center text-blue-700 font-semibold text-lg hidden z-10">
                         Drop a file to upload
+                        <div id="closeUpload" class="absolute cursor-pointer hover:bg-blue-200 rounded-md p-1 right-10 top-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>                              
+                        </div>
                     </div>
                     <a href="{{ route('documents') }}" class="font-bold text-3xl hover:underline mb-2">
                         Documents
@@ -93,13 +98,18 @@
                                                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="docuButton-{{ $directory }}">
                                                         <li><a href="{{ route('documents', ['folder' => str_replace('public/documents/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
                                                         <li>
-                                                            <a href="{{ route('folders.download', ['folder' => str_replace('public/documents/', '', $directory)]) }}"
+                                                            {{-- <a href="{{ route('folders.download', ['folder' => str_replace('public/documents/', '', $directory)]) }}"
                                                                class="block px-4 py-2 hover:bg-gray-100"
                                                                onclick="event.stopPropagation();">
                                                                Download
-                                                            </a>
+                                                            </a> --}}
+                                                            <button 
+                                                                class="block px-4 py-2 hover:bg-gray-100 bg-transparent border-0 cursor-pointer"
+                                                                onclick="downloadFolder('{{ route('folders.download', ['folder' => str_replace('public/documents/', '', $directory)]) }}');">
+                                                                Download
+                                                            </button>
                                                         </li>
-                                                        <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full">Edit</button></li>
+                                                        <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="editFolderName('{{ basename($directory) }}')">Edit</button></li>
                                                         <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full">Archive</button></li>
                                                         <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToTrash('{{ basename($directory) }}', true)">Trash</button></li>                     
                                                     </ul>
@@ -124,7 +134,7 @@
                                         </div>
                                     </div>
                                     <div class="flex flex-col justify-end">
-                                        <div class="text-lg font-bold overflow-hidden overflow-ellipsis whitespace-normal line-clamp-2">
+                                        <div class="text-lg font-bold overflow-hidden overflow-ellipsis whitespace-normal line-clamp-2" id="folder-name-{{ basename($directory) }}">
                                             {{ basename($directory) }}
                                         </div>
                                         <div class="text-xs text-gray-400">
@@ -143,7 +153,7 @@
                                                 </svg> 
                                             </div>
                                             <div class="flex flex-col justify-end min-w-0">
-                                                <div class="text-lg font-bold truncate max-w-full">
+                                                <div class="text-lg font-bold truncate max-w-full" id="folder-name-list-{{ basename($directory) }}">
                                                     {{ basename($directory) }}
                                                 </div>
                                                 <div class="text-xs text-gray-400">
@@ -178,8 +188,14 @@
                                                 <div id="docuDropdownList-{{ $directory }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
                                                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="docuButtonList-{{ $directory }}">
                                                         <li><a href="{{ route('documents', ['folder' => str_replace('public/documents/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
-                                                        <li><a href="{{ route('folders.download', ['folder' => str_replace('public/documents/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100" onclick="event.stopPropagation();">Download</a></li>
-                                                        <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full">Edit</button></li>
+                                                        <li>
+                                                            <button 
+                                                                class="block px-4 py-2 hover:bg-gray-100 bg-transparent border-0 cursor-pointer"
+                                                                onclick="downloadFolder('{{ route('folders.download', ['folder' => str_replace('public/documents/', '', $directory)]) }}');">
+                                                                Download
+                                                            </button>
+                                                        </li>
+                                                        <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="editFolderNameList('{{ basename($directory) }}')">Edit</button></li>
                                                         <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full">Archive</button></li>
                                                         <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToTrash('{{ basename($directory) }}', true)">Trash</button></li>                     
                                                     </ul>
@@ -214,7 +230,7 @@
                                                             <a href="{{ Storage::url($file) }}" target="_blank" class="block px-4 py-2 hover:bg-gray-100">Download</a>
                                                         </li>
                                                         <li>
-                                                            <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full">Edit</button>
+                                                            <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="editFileName('{{ basename($file) }}', {{ $index }})">Edit</button>
                                                         </li>
                                                         <li>
                                                             <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full">Archive</button>
@@ -243,7 +259,7 @@
                                         </div>
                                     </div>
                                     <div class="flex flex-col justify-end">
-                                        <div class="text-lg font-bold overflow-hidden overflow-ellipsis whitespace-normal line-clamp-2">
+                                        <div class="text-lg font-bold overflow-hidden overflow-ellipsis whitespace-normal line-clamp-2" id="file-name-{{ basename($file) }}">
                                             {{ basename($file) }}
                                         </div>
                                         <div class="text-xs text-gray-400">
@@ -270,15 +286,12 @@
                                                 </svg>
                                             </div>
                                             <div class="flex flex-col justify-end min-w-0">
-                                                <div class="text-lg font-bold truncate max-w-full">
+                                                <div class="text-lg font-bold truncate max-w-full" id="file-name-list-{{ basename($file) }}">
                                                     {{ basename($file) }}
                                                 </div>
                                                 <div class="text-xs text-gray-400 truncate max-w-full">
                                                     @php
-                                                        // Get the last modified timestamp of the file
                                                         $timestamp = Storage::lastModified($file);
-                                    
-                                                        // Format the timestamp using Carbon
                                                         $lastModifiedDate = \Carbon\Carbon::createFromTimestamp($timestamp)->format('h:i A, d M Y');
                                                     @endphp
                                                     {{ $lastModifiedDate }}
@@ -292,14 +305,13 @@
                                                         <path fill-rule="evenodd" d="M10.5 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" clip-rule="evenodd" />
                                                     </svg>
                                                 </button>
-                                                <!-- Dropdown menu -->
                                                 <div id="docuDropdownList-{{ $index }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
                                                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="docuButtonList-{{ $index }}">
                                                         <li>
                                                             <a href="{{ Storage::url($file) }}" target="_blank" class="block px-4 py-2 hover:bg-gray-100">Download</a>
                                                         </li>
                                                         <li>
-                                                            <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full">Edit</button>
+                                                            <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="editFileNameList('{{ basename($file) }}', {{ $index }})">Edit</button>
                                                         </li>
                                                         <li>
                                                             <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full">Archive</button>
@@ -312,7 +324,7 @@
                                             </div>
                                             <div class="text-xs text-gray-400">
                                                 @php
-                                                    $size = Storage::size($file); // Size in bytes
+                                                    $size = Storage::size($file); 
                                                     if ($size >= 1073741824) {
                                                         $size = number_format($size / 1073741824, 2) . ' GB';
                                                     } elseif ($size >= 1048576) {
@@ -327,7 +339,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
                                 </div>
                             @endforeach
                         @else
@@ -343,6 +354,344 @@
 </body>
 
 <script>
+    function downloadFolder(url) {
+        // Make a request to the download route using fetch (or axios)
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        if (data.error) {
+                            // Show SweetAlert if folder is empty
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Oops...',
+                                text: data.error,
+                            });
+                        }
+                    });
+                }
+
+                // If the folder is not empty, the server will handle the file download.
+                window.location.href = url; // Trigger the download directly using the URL
+            })
+            .catch(error => {
+                console.error('Error downloading folder:', error);
+            });
+    }
+
+    function editFolderName(directory) {
+        // Find the file name display element
+        const folderNameElement = document.getElementById('folder-name-' + directory);
+        folderNameElement.classList.add('p-0.5');
+
+        // Store the original file name to revert back if needed
+        const originalFolderName = directory;
+
+        // Create an input field to edit the base file name (without extension)
+        const inputField = document.createElement('input');
+        inputField.type = 'text';
+        inputField.value = directory; // Set the base name as the default value
+        inputField.classList.add('text-md', 'font-bold', 'border', 'border-gray-300', 'rounded-lg', 'p-2', 'w-full');
+
+        // Replace the text with the input field
+        folderNameElement.innerHTML = '';
+        folderNameElement.appendChild(inputField);
+
+        // Focus on the input field
+        inputField.focus();
+        
+        // Create a save button for the changes
+        const saveButton = document.createElement('button');
+        saveButton.textContent = 'Save';
+        saveButton.classList.add('mt-2', 'me-1', 'bg-blue-500', 'cursor-pointer', 'hover:bg-blue-600', 'text-white', 'text-sm', 'rounded-lg', 'px-4', 'py-1');
+
+        saveButton.onclick = function() {
+            const newFolderName = inputField.value;
+            if (newFolderName && newFolderName !== originalFolderName) {
+                updateFileName(originalFolderName, newFolderName);
+            } else {
+                folderNameElement.innerHTML = originalFolderName;
+            }
+        };
+
+        // Create a cancel button to revert changes
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'Cancel';
+        cancelButton.classList.add('mt-2', 'bg-red-500', 'cursor-pointer', 'hover:bg-red-600', 'text-white', 'text-sm', 'rounded-lg', 'px-4', 'py-1');
+
+        cancelButton.onclick = function() {
+            // Revert back to the original file name
+            folderNameElement.innerHTML = originalFolderName;
+        };
+
+        // Append the save and cancel buttons
+        folderNameElement.appendChild(saveButton);
+        folderNameElement.appendChild(cancelButton);
+
+        inputField.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                // Trigger the save button's onclick event when Enter is pressed
+                saveButton.click();
+            }
+        });
+    }
+
+    function editFolderNameList(directory) {
+        const folderNameElement = document.getElementById('folder-name-list-' + directory);
+        folderNameElement.classList.add('p-0.5');
+        const originalFolderName = folderNameElement.innerText.trim(); // Get the current file name
+
+        // Create an input field for editing the file name (without extension)
+        const inputField = document.createElement('input');
+        inputField.type = 'text';
+        inputField.value = directory; // Set the base name as the default value
+        inputField.classList.add('text-md', 'font-bold', 'border', 'border-gray-300', 'rounded-lg', 'p-1', 'w-full');
+
+        // Clear the current file name and append the input field
+        folderNameElement.innerHTML = '';  // Clear content
+        folderNameElement.appendChild(inputField);  // Add input field
+        inputField.focus(); // Focus on the input field
+
+        // Get the parent file card element (for positioning the buttons inside the file-card)
+        const folderCard = folderNameElement.closest('.folder-card.list-view');
+        folderCard.style.position = 'relative'; // Make sure file card is positioned relative
+
+        // Create the Save button
+        const saveButtonList = document.createElement('button');
+        saveButtonList.textContent = 'Save';
+        saveButtonList.classList.add('mt-2', 'me-1', 'bg-blue-500', 'cursor-pointer', 'hover:bg-blue-600', 'text-white', 'text-sm', 'rounded-lg', 'px-4', 'py-1');
+        saveButtonList.style.position = 'absolute';
+        saveButtonList.style.top = '10px'; // Adjust as needed
+        saveButtonList.style.right = '160px'; // Adjust as needed
+
+        // Save button functionality
+        saveButtonList.onclick = function() {
+            const newFolderName = inputField.value;
+            if (newFolderName && newFolderName !== directory) {
+                updateFileName(originalFolderName, newFolderName);
+            } else {
+                folderNameElement.innerHTML = originalFolderName;
+                saveButtonList.remove();
+                cancelButton.remove();
+            }
+        };
+
+        // Create the Cancel button
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'Cancel';
+        cancelButton.classList.add('mt-2', 'bg-red-500', 'cursor-pointer', 'hover:bg-red-600', 'text-white', 'text-sm', 'rounded-lg', 'px-4', 'py-1');
+        cancelButton.style.position = 'absolute';
+        cancelButton.style.top = '10px'; // Adjust as needed
+        cancelButton.style.right = '85px'; // Adjust as needed
+
+        // Cancel button functionality
+        cancelButton.onclick = function() {
+            // Revert to original file name if cancel is clicked
+            folderNameElement.innerHTML = originalFolderName;
+            // Hide the Save and Cancel buttons after canceling
+            saveButtonList.remove();
+            cancelButton.remove();
+        };
+
+        // Append the Save and Cancel buttons to the file card element
+        folderCard.appendChild(saveButtonList);
+        folderCard.appendChild(cancelButton);
+
+        inputField.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                // Trigger the save button's onclick event when Enter is pressed
+                saveButtonList.click();
+            }
+        });
+    }
+
+    function editFileName(fileName, index) {
+        // Split the file name and extension
+        const fileParts = fileName.split('.');
+        const fileExtension = fileParts.length > 1 ? '.' + fileParts.pop() : ''; // Get the extension (if any)
+        const baseFileName = fileParts.join('.'); // Get the base name without the extension
+
+        // Find the file name display element
+        const fileNameElement = document.getElementById('file-name-' + fileName);
+        fileNameElement.classList.add('p-0.5');
+
+        // Store the original file name to revert back if needed
+        const originalFileName = fileName;
+
+        // Create an input field to edit the base file name (without extension)
+        const inputField = document.createElement('input');
+        inputField.type = 'text';
+        inputField.value = baseFileName; // Set the base name as the default value
+        inputField.classList.add('text-md', 'font-bold', 'border', 'border-gray-300', 'rounded-lg', 'p-2', 'w-full');
+
+        // Replace the text with the input field
+        fileNameElement.innerHTML = '';
+        fileNameElement.appendChild(inputField);
+
+        // Focus on the input field
+        inputField.focus();
+        
+        // Create a save button for the changes
+        const saveButton = document.createElement('button');
+        saveButton.textContent = 'Save';
+        saveButton.classList.add('mt-2', 'me-1', 'bg-blue-500', 'cursor-pointer', 'hover:bg-blue-600', 'text-white', 'text-sm', 'rounded-lg', 'px-4', 'py-1');
+
+        saveButton.onclick = function() {
+            const newBaseFileName = inputField.value.trim();
+            if (newBaseFileName && newBaseFileName !== baseFileName) {
+                const newFileName = newBaseFileName + fileExtension;
+
+                // Call backend to update the file name
+                updateFileName(originalFileName, newFileName);
+            } else {
+                fileNameElement.innerHTML = originalFileName;
+            }
+        };
+
+        // Create a cancel button to revert changes
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'Cancel';
+        cancelButton.classList.add('mt-2', 'bg-red-500', 'cursor-pointer', 'hover:bg-red-600', 'text-white', 'text-sm', 'rounded-lg', 'px-4', 'py-1');
+
+        cancelButton.onclick = function() {
+            // Revert back to the original file name
+            fileNameElement.innerHTML = originalFileName;
+        };
+
+        // Append the save and cancel buttons
+        fileNameElement.appendChild(saveButton);
+        fileNameElement.appendChild(cancelButton);
+
+        inputField.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                // Trigger the save button's onclick event when Enter is pressed
+                saveButton.click();
+            }
+        });
+    }
+
+    function editFileNameList(fileName, index) {
+        // Split the file name and extension
+        const fileParts = fileName.split('.');
+        const fileExtension = fileParts.length > 1 ? '.' + fileParts.pop() : ''; // Get the extension (if any)
+        const baseFileName = fileParts.join('.'); // Get the base name without the extension
+
+        const fileNameElement = document.getElementById('file-name-list-' + fileName);
+        fileNameElement.classList.add('p-0.5');
+        const originalFileName = fileNameElement.innerText.trim(); // Get the current file name
+
+        // Create an input field for editing the file name (without extension)
+        const inputField = document.createElement('input');
+        inputField.type = 'text';
+        inputField.value = baseFileName; // Set the base name as the default value
+        inputField.classList.add('text-md', 'font-bold', 'border', 'border-gray-300', 'rounded-lg', 'p-1', 'w-full');
+
+        // Clear the current file name and append the input field
+        fileNameElement.innerHTML = '';  // Clear content
+        fileNameElement.appendChild(inputField);  // Add input field
+        inputField.focus(); // Focus on the input field
+
+        // Get the parent file card element (for positioning the buttons inside the file-card)
+        const fileCard = fileNameElement.closest('.file-card.list-view');
+        fileCard.style.position = 'relative'; // Make sure file card is positioned relative
+
+        // Create the Save button
+        const saveButtonList = document.createElement('button');
+        saveButtonList.textContent = 'Save';
+        saveButtonList.classList.add('mt-2', 'me-1', 'bg-blue-500', 'cursor-pointer', 'hover:bg-blue-600', 'text-white', 'text-sm', 'rounded-lg', 'px-4', 'py-1');
+        saveButtonList.style.position = 'absolute';
+        saveButtonList.style.top = '10px'; // Adjust as needed
+        saveButtonList.style.right = '160px'; // Adjust as needed
+
+        // Save button functionality
+        saveButtonList.onclick = function() {
+            const newBaseFileName = inputField.value.trim();
+            if (newBaseFileName && newBaseFileName !== baseFileName) {
+                const newFileName = newBaseFileName + fileExtension;
+
+                // Call backend to update the file name
+                updateFileName(originalFileName, newFileName);
+            } else {
+                fileNameElement.innerHTML = originalFileName;
+                saveButtonList.remove();
+                cancelButton.remove();
+            }
+        };
+
+        // Create the Cancel button
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'Cancel';
+        cancelButton.classList.add('mt-2', 'bg-red-500', 'cursor-pointer', 'hover:bg-red-600', 'text-white', 'text-sm', 'rounded-lg', 'px-4', 'py-1');
+        cancelButton.style.position = 'absolute';
+        cancelButton.style.top = '10px'; // Adjust as needed
+        cancelButton.style.right = '85px'; // Adjust as needed
+
+        // Cancel button functionality
+        cancelButton.onclick = function() {
+            // Revert to original file name if cancel is clicked
+            fileNameElement.innerHTML = originalFileName;
+            // Hide the Save and Cancel buttons after canceling
+            saveButtonList.remove();
+            cancelButton.remove();
+        };
+
+        // Append the Save and Cancel buttons to the file card element
+        fileCard.appendChild(saveButtonList);
+        fileCard.appendChild(cancelButton);
+
+        inputField.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                // Trigger the save button's onclick event when Enter is pressed
+                saveButtonList.click();
+            }
+        });
+    }
+
+    function updateFileName(oldFileName, newFileName) {
+        const data = {
+            old_file_name: oldFileName,
+            new_file_name: newFileName,
+        };
+        
+        // Make the AJAX request (using fetch)
+        fetch('{{ route("update-file-name") }}', {
+            method: 'POST', // or 'PUT' depending on your controller method
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(responseData => {
+            if (responseData.success) {
+                // alert('File name updated successfully');
+                // Optionally, update the UI here with the new file name
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Edit Complete',
+                    text: responseData.message,
+                    timer: 3000,
+                    showConfirmButton: false,
+                    willClose: () => { location.reload(); }
+                });
+            } else {
+                // alert('Failed to update the file name: ' + (responseData.message || 'Unknown error'));
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: responseData.message,
+                    showConfirmButton: true
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating the file name');
+        });
+    }
+
+
     let sortDirection = 'asc';
 
     function sortByName() {
@@ -401,6 +750,9 @@
 
     const dropZone = document.getElementById('drop-zone');
     const dragOverlay = document.getElementById('drag-overlay');
+    const fileUploadButton = document.getElementById('fileUploadButton');
+    const folderUploadButton = document.getElementById('folderUploadButton');
+    const closeUpload = document.getElementById('closeUpload');
 
     let isUploading = false;  // Flag to prevent multiple SweetAlerts
     let filesToUpload = 0;     // Counter for the number of files to upload
@@ -417,6 +769,21 @@
         if (!dropZone.contains(e.relatedTarget)) {
             dragOverlay.classList.add('hidden');
         }
+    });
+
+    fileUploadButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        dragOverlay.classList.remove('hidden');
+    });
+
+    folderUploadButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        dragOverlay.classList.remove('hidden');
+    });
+
+    closeUpload.addEventListener('click', (e) => {
+        e.preventDefault();
+        dragOverlay.classList.add('hidden');
     });
 
     dropZone.addEventListener('drop', (e) => {

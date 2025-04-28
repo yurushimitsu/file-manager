@@ -61,35 +61,89 @@ class FileController extends Controller
         $folderName = basename($folder);
         $zipFileName = Str::slug($folderName) . '.zip';
         $zipPath = $zipDir . '/' . $zipFileName;
-
+    
         // Make sure temp directory exists
         if (!file_exists($zipDir)) {
             mkdir($zipDir, 0755, true);
         }
-
-        if (!file_exists($folderPath)) {
+    
+        if (!file_exists($folderPath) || !is_dir($folderPath)) {
             abort(404, 'Folder not found.');
         }
+    
+        // Check if folder contains files
+        $hasFiles = false;
+        $files = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($folderPath),
+            \RecursiveIteratorIterator::LEAVES_ONLY
+        );
+    
+        foreach ($files as $name => $file) {
+            if (!$file->isDir()) {
+                $hasFiles = true;
+                break;
+            }
+        }
 
+        if (!$hasFiles) {
+            return response()->json(['error' => 'The folder is empty.'], 400);
+        }
+    
         $zip = new ZipArchive;
         if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
-            $files = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($folderPath),
-                \RecursiveIteratorIterator::LEAVES_ONLY
-            );
-
+            // Add files to the zip archive
             foreach ($files as $name => $file) {
                 if (!$file->isDir()) {
-                    $filePath     = $file->getRealPath();
+                    $filePath = $file->getRealPath();
                     $relativePath = substr($filePath, strlen($folderPath) + 1);
                     $zip->addFile($filePath, $relativePath);
                 }
             }
-
+    
             $zip->close();
         }
-
+    
         return response()->download($zipPath)->deleteFileAfterSend(true);
+    }
+    
+
+    public function updateFileName(Request $request) {
+        $oldFileName = $request->input('old_file_name');
+        $newFileName = $request->input('new_file_name');
+
+        $referrer = $request->headers->get('referer');
+        $currentFolder = urldecode(parse_url($referrer, PHP_URL_PATH));
+
+        // Ensure the old and new file names are not empty
+        if (!$oldFileName || !$newFileName) {
+            return response()->json(['success' => false, 'message' => 'File names are required']);
+        }
+
+        // Get the full path of the old and new file names
+        $oldFilePath = 'public' . $currentFolder . '/' . $oldFileName;
+        $newFilePath = 'public' . $currentFolder . '/' . $newFileName;
+
+        // Check if the file exists
+        if (!Storage::exists($oldFilePath)) {
+            return response()->json(['success' => false, 'message' => 'File does not exist: '. $oldFilePath]);
+        }
+
+        // Check if the new file already exists
+        if (Storage::exists($newFilePath)) {
+            return response()->json(['success' => false, 'message' => 'Filename already exists: '. $newFileName]);
+        }
+
+        // Rename the file
+        try {
+            // Rename the file on the storage disk (this will also move the file if a new folder is specified)
+            Storage::move($oldFilePath, $newFilePath);
+
+            // Return success response
+            return response()->json(['success' => true, 'message' => $oldFileName. ' has been renamed to '. $newFileName]);
+        } catch (\Exception $e) {
+            // Return error response in case of failure
+            return response()->json(['success' => false, 'message' => 'Failed to update the file']);
+        }
     }
 
     public function showTrash($folder = null) {
