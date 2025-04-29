@@ -1,6 +1,6 @@
 @extends('layout.master')
 
-@section('title', 'Documents')
+@section('title', 'Archive')
 
 @section('body')
 
@@ -8,8 +8,6 @@
     @include('layout.navbar')
 
     @include('layout.sidebar')
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
     <div class="ml-15 lg:ml-50 mt-20 flex justify-center">
         <div class="container">
@@ -24,14 +22,14 @@
                             </svg>                              
                         </div>
                     </div>
-                    <a href="{{ route('documents') }}" class="font-bold text-3xl hover:underline mb-2">
-                        Documents
+                    <a href="{{ route('archive') }}" class="font-bold text-3xl hover:underline mb-2">
+                        Archives
                     </a>
                     @if (!empty($folderExploded))
                         @foreach ($folderExploded as $index => $folderSegment)
                             <!-- Create a link to each folder in the path -->
                             /
-                            <a href="{{ route('documents', ['folder' => implode('/', array_slice($folderExploded, 0, $index + 1))]) }}"
+                            <a href="{{ route('archive', ['folder' => implode('/', array_slice($folderExploded, 0, $index + 1))]) }}"
                                 class="cursor-pointer hover:underline 
                                         {{ (isset($currentFolder) && $currentFolder == $folderSegment) ? 'underline font-semibold' : '' }}">
                                     {{ ucfirst($folderSegment) }}
@@ -79,7 +77,7 @@
                     <div id="sortable-files" class="flex flex-wrap justify-center md:justify-start gap-5">
                         @if (!empty($directories) || !empty($files))
                             @foreach ($directories as $directory)
-                                <div class="folder-card grid-view grid grid-cols-1 content-between bg-white rounded-xl p-4 shadow-lg h-45 w-45 select-none cursor-pointer hover:bg-gray-50" data-id="{{ $directory }}" id="folder-{{ basename($directory) }}" ondblclick="window.location.href='{{ route('documents', ['folder' => str_replace('public/documents/', '', $directory)]) }}'" title="{{ basename($directory) }}">
+                                <div class="folder-card grid-view grid grid-cols-1 content-between bg-white rounded-xl p-4 shadow-lg h-45 w-45 select-none cursor-pointer hover:bg-gray-50" data-id="{{ $directory }}" id="folder-{{ basename($directory) }}" ondblclick="window.location.href='{{ route('archive', ['folder' => str_replace('public/archive/', '', $directory)]) }}'" title="{{ basename($directory) }}">
                                     <div class="flex items-start justify-between">
                                         <div class="bg-[#C8EAFF] rounded-full p-3">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-[#0F52FF]">
@@ -96,7 +94,7 @@
                                                 <!-- Dropdown menu -->
                                                 <div id="docuDropdown-{{ $directory }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
                                                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="docuButton-{{ $directory }}">
-                                                        <li><a href="{{ route('documents', ['folder' => str_replace('public/documents/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
+                                                        <li><a href="{{ route('archive', ['folder' => str_replace('public/archive/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
                                                         <li>
                                                             {{-- <a href="{{ route('folders.download', ['folder' => str_replace('public/documents/', '', $directory)]) }}"
                                                                class="block px-4 py-2 hover:bg-gray-100"
@@ -105,7 +103,7 @@
                                                             </a> --}}
                                                             <button 
                                                                 class="block px-4 py-2 hover:bg-gray-100 bg-transparent border-0 cursor-pointer"
-                                                                onclick="downloadFolder('{{ route('folders.download', ['folder' => str_replace('public/documents/', '', $directory)]) }}');">
+                                                                onclick="downloadFolder('{{ route('folders.download', ['folder' => str_replace('public/archive/', '', $directory)]) }}');">
                                                                 Download
                                                             </button>
                                                         </li>
@@ -144,7 +142,7 @@
                                 </div>
                                 
                                 {{-- List View --}}
-                                <div class="folder-card list-view bg-white rounded-xl shadow-lg h-15 w-full select-none cursor-pointer hover:bg-gray-50 hidden" data-id="{{ $directory }}" id="folderList-{{ basename($directory) }}" ondblclick="window.location.href='{{ route('documents', ['folder' => str_replace('public/documents/', '', $directory)]) }}'" title="{{ basename($directory) }}">
+                                <div class="folder-card list-view bg-white rounded-xl shadow-lg h-15 w-full select-none cursor-pointer hover:bg-gray-50 hidden" data-id="{{ $directory }}" id="folderList-{{ basename($directory) }}" ondblclick="window.location.href='{{ route('archive', ['folder' => str_replace('public/archive/', '', $directory)]) }}'" title="{{ basename($directory) }}">
                                     <div class="flex items-center justify-between p-3 h-full w-full">
                                         <div class="flex flex-row items-center min-w-0">
                                             <div class="bg-[#C8EAFF] rounded-full p-3 me-3">
@@ -187,11 +185,11 @@
                                                 <!-- Dropdown menu -->
                                                 <div id="docuDropdownList-{{ $directory }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
                                                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="docuButtonList-{{ $directory }}">
-                                                        <li><a href="{{ route('documents', ['folder' => str_replace('public/documents/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
+                                                        <li><a href="{{ route('archive', ['folder' => str_replace('public/archive/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
                                                         <li>
                                                             <button 
                                                                 class="block px-4 py-2 hover:bg-gray-100 bg-transparent border-0 cursor-pointer"
-                                                                onclick="downloadFolder('{{ route('folders.download', ['folder' => str_replace('public/documents/', '', $directory)]) }}');">
+                                                                onclick="downloadFolder('{{ route('folders.download', ['folder' => str_replace('public/archive/', '', $directory)]) }}');">
                                                                 Download
                                                             </button>
                                                         </li>
@@ -357,42 +355,11 @@
     window.Laravel = {
         csrfToken: '{{ csrf_token() }}',
         routes: {
-            updateFileName: '{{ route("update-file-name") }}',
-            upload: '{{ route("upload") }}',
-            uplodaCheck: '{{ route("upload.check") }}',
-            moveToArchive: '{{ route("moveToArchive") }}',
-            moveToTrash: '{{ route("moveToTrash") }}'
+            updateFileName: '{{ route("update-file-name") }}'
         }
     };
 </script>
-
 <script src="/js/editFile.js"></script>
 <script src="/js/sort.js"></script>
-<script src="/js/uploadFile.js"></script>
-<script src="/js/move.js"></script>
-
-<script>
-    
-
-    // Initialize SortableJS for dragging and dropping
-    const sortable = new Sortable(document.getElementById('sortable-files'), {
-        group: 'files-and-folders',  // Define the group for drag-and-drop
-        animation: 150,  // Animation duration when dragging
-        // onEnd(evt) {
-        //     const movedItem = evt.item;  // Get the moved item
-        //     const originalIndex = evt.from.children; // Get the original index
-        //     const newIndex = evt.to.children; // Get the new index
-            
-        //     // Optionally, you can trigger a POST request to save the change to the backend
-        //     const id = movedItem.getAttribute('data-id');
-        //     const newParentId = evt.to.getAttribute('id');
-            
-        //     // Perform backend action (e.g., move the file/folder) using AJAX/fetch
-        //     moveItemToNewLocation(id, newParentId);
-        // }
-    });
-
-    
-</script>
 
 @endsection

@@ -10,21 +10,6 @@ use ZipArchive;
 
 class FileController extends Controller
 {
-    // public function showDocuments() {
-    //     $files = Storage::files('public/documents');
-    //     $directories = Storage::directories('public/documents');
-
-    //     // Calculate folder sizes
-    //     $folderSizes = [];
-    //     foreach ($directories as $directory) {
-    //         $folderSizes[$directory] = $this->getFolderSize($directory);
-    //     }
-
-    //     // dd($files);
-
-    //     return view('dashboard.documents', compact('files', 'directories', 'folderSizes'));
-    // }
-
     public function showDocuments($folder = null) {
         if (!File::exists(storage_path('app/public/documents'))) {
             File::makeDirectory(storage_path('app/public/documents'), 0755, true);
@@ -56,7 +41,13 @@ class FileController extends Controller
 
     public function downloadFolder(Request $request) {
         $folder = $request->query('folder'); // e.g., "some-folder"
-        $folderPath = storage_path("app/public/documents/{$folder}");
+        
+        $referrer = $request->headers->get('referer');
+        $currentFolder = urldecode(parse_url($referrer, PHP_URL_PATH));
+        $pathSegments = explode('/', trim($currentFolder, '/'));
+        $firstFolder = $pathSegments[0] ?? '';
+        
+        $folderPath = storage_path("app/public/{$firstFolder}/{$folder}");
         $zipDir = storage_path('app/temp');
         $folderName = basename($folder);
         $zipFileName = Str::slug($folderName) . '.zip';
@@ -144,6 +135,35 @@ class FileController extends Controller
             // Return error response in case of failure
             return response()->json(['success' => false, 'message' => 'Failed to update the file']);
         }
+    }
+
+    public function showArchive($folder = null) {
+        if (!File::exists(storage_path('app/public/archive'))) {
+            File::makeDirectory(storage_path('app/public/archive'), 0755, true);
+        }
+
+        $basePath = 'public/archive';
+
+        $docuFolderFileSize = $this->getFolderSize($basePath);
+    
+        if ($folder) {
+            $path = $basePath . '/' . $folder;
+        } else {
+            $path = $basePath;
+        }
+        
+        $folderExploded = $folder ? explode('/', $folder) : [];
+        $currentFolder = end($folderExploded);
+    
+        $files = Storage::files($path);
+        $directories = Storage::directories($path);
+    
+        $folderSizes = [];
+        foreach ($directories as $directory) {
+            $folderSizes[$directory] = $this->getFolderSize($directory);
+        }
+    
+        return view('dashboard.archive', compact('files', 'directories', 'folderSizes', 'folderExploded', 'currentFolder', 'docuFolderFileSize'));
     }
 
     public function showTrash($folder = null) {
@@ -254,6 +274,65 @@ class FileController extends Controller
         return response()->json(['message' => 'Failed to create folder'], 500);
     }
 
+    public function moveToArchive(Request $request) {
+
+        $referrer = $request->headers->get('referer');
+        $currentFolder = urldecode(parse_url($referrer, PHP_URL_PATH));
+
+        $itemName = $request->input('item');  // File or Folder name
+        $isFolder = $request->input('isFolder');  // Is it a folder?
+
+        // Define paths
+        $documentPath = 'public' . $currentFolder . '/' . $itemName;
+        $trashPath = 'public/archive/' . $itemName;
+
+        // For file handling
+        if (!$isFolder) {
+            if (Storage::exists($documentPath)) {
+                try {
+                    // Ensure the archive folder exists
+                    if (!File::exists(storage_path('app/public/archive'))) {
+                        File::makeDirectory(storage_path('app/public/archive'), 0755, true);
+                    }
+
+                    // Move the file to archive
+                    if (Storage::move($documentPath, $trashPath)) {
+                        return response()->json(['success' => true]);
+                    } else {
+                        return response()->json(['success' => false, 'message' => 'Failed to move file.'], 500);
+                    }
+                } catch (\Exception $e) {
+                    return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+                }
+            }
+        }
+        // For folder handling
+        else {
+            $folderPath = storage_path('app/public' . $currentFolder . '/' . $itemName);
+            $folderTrashPath = storage_path('app/public/archive/' . $itemName);
+            
+            if (File::isDirectory($folderPath)) {
+                try {
+                    // Ensure the trash archive exists
+                    if (!File::exists(storage_path('app/public/archive'))) {
+                        File::makeDirectory(storage_path('app/public/archive'), 0755, true);
+                    }
+
+                    // Move the folder to archive
+                    if (File::move($folderPath, $folderTrashPath)) {
+                        return response()->json(['success' => true]);
+                    } else {
+                        return response()->json(['success' => false, 'message' => 'Failed to move folder.'], 500);
+                    }
+                } catch (\Exception $e) {
+                    return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+                }
+            }
+        }
+
+        return response()->json(['success' => false, 'message' => 'Item not found.' . $folderPath], 404);
+    }
+
     public function moveToTrash(Request $request) {
 
         $referrer = $request->headers->get('referer');
@@ -311,7 +390,5 @@ class FileController extends Controller
         }
 
         return response()->json(['success' => false, 'message' => 'Item not found.' . $folderPath], 404);
-    
     }
-
 }

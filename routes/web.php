@@ -32,6 +32,8 @@ Route::get('/dashboard', function () {
 // })->name('documents');
 
 Route::get('/documents/{folder?}', [FileController::class, 'showDocuments'])->name('documents')->where('folder', '.*');
+Route::get('/archive/{folder?}', [FileController::class, 'showArchive'])->name('archive')->where('folder', '.*');
+
 // Add this route for handling the file name update
 Route::post('/update-file-name', [FileController::class, 'updateFileName'])->name('update-file-name');
 
@@ -44,4 +46,5 @@ Route::post('/documents/upload/check', [FileController::class, 'checkIfExists'])
 
 Route::post('/documents/create-folder', [FileController::class, 'createFolder'])->name('createFolder');
 
+Route::post('/move-to-archive', [FileController::class, 'moveToArchive'])->name('moveToArchive');
 Route::post('/move-to-trash', [FileController::class, 'moveToTrash'])->name('moveToTrash');
