@@ -21,7 +21,7 @@ Route::get('/', function () {
 
 Route::get('/login', function () {
     return view('login');
-});
+})->name('login');
 
 Route::get('/dashboard', function () {
     return view('dashboard.main');
@@ -48,3 +48,5 @@ Route::post('/documents/create-folder', [FileController::class, 'createFolder'])
 
 Route::post('/move-to-archive', [FileController::class, 'moveToArchive'])->name('moveToArchive');
 Route::post('/move-to-trash', [FileController::class, 'moveToTrash'])->name('moveToTrash');
+Route::post('/restore-files', [FileController::class, 'restoreFiles'])->name('restoreFiles');
+Route::post('/delete-files', [FileController::class, 'deleteFile'])->name('deleteFile');

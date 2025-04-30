@@ -96,19 +96,13 @@
                                                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="docuButton-{{ $directory }}">
                                                         <li><a href="{{ route('archive', ['folder' => str_replace('public/archive/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
                                                         <li>
-                                                            {{-- <a href="{{ route('folders.download', ['folder' => str_replace('public/documents/', '', $directory)]) }}"
-                                                               class="block px-4 py-2 hover:bg-gray-100"
-                                                               onclick="event.stopPropagation();">
-                                                               Download
-                                                            </a> --}}
                                                             <button 
                                                                 class="block px-4 py-2 hover:bg-gray-100 bg-transparent border-0 cursor-pointer"
                                                                 onclick="downloadFolder('{{ route('folders.download', ['folder' => str_replace('public/archive/', '', $directory)]) }}');">
                                                                 Download
                                                             </button>
                                                         </li>
-                                                        <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="editFolderName('{{ basename($directory) }}')">Edit</button></li>
-                                                        <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToArchive('{{ basename($directory) }}', true)">Archive</button></li>
+                                                        <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="restoreFiles('{{ basename($directory) }}', true)">Restore</button></li>
                                                         <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToTrash('{{ basename($directory) }}', true)">Trash</button></li>                     
                                                     </ul>
                                                 </div>
@@ -193,8 +187,7 @@
                                                                 Download
                                                             </button>
                                                         </li>
-                                                        <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="editFolderNameList('{{ basename($directory) }}')">Edit</button></li>
-                                                        <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToArchive('{{ basename($directory) }}', true)">Archive</button></li>
+                                                        <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="restoreFiles('{{ basename($directory) }}', true)">Restore</button></li>
                                                         <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToTrash('{{ basename($directory) }}', true)">Trash</button></li>                     
                                                     </ul>
                                                 </div>
@@ -228,10 +221,7 @@
                                                             <a href="{{ Storage::url($file) }}" target="_blank" class="block px-4 py-2 hover:bg-gray-100">Download</a>
                                                         </li>
                                                         <li>
-                                                            <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="editFileName('{{ basename($file) }}', {{ $index }})">Edit</button>
-                                                        </li>
-                                                        <li>
-                                                            <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToArchive('{{ basename($file) }}', false)">Archive</button>
+                                                            <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="restoreFiles('{{ basename($file) }}', false)">Restore</button>
                                                         </li>
                                                         <li>
                                                             <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToTrash('{{ basename($file) }}', false)">Trash</button>
@@ -309,10 +299,7 @@
                                                             <a href="{{ Storage::url($file) }}" target="_blank" class="block px-4 py-2 hover:bg-gray-100">Download</a>
                                                         </li>
                                                         <li>
-                                                            <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="editFileNameList('{{ basename($file) }}', {{ $index }})">Edit</button>
-                                                        </li>
-                                                        <li>
-                                                            <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToArchive('{{ basename($file) }}', false)">Archive</button>
+                                                            <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="restoreFiles('{{ basename($file) }}', false)">Restore</button>
                                                         </li>
                                                         <li>
                                                             <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToTrash('{{ basename($file) }}', false)">Trash</button>
@@ -355,11 +342,14 @@
     window.Laravel = {
         csrfToken: '{{ csrf_token() }}',
         routes: {
-            updateFileName: '{{ route("update-file-name") }}'
+            updateFileName: '{{ route("update-file-name") }}',
+            moveToTrash: '{{ route("moveToTrash") }}',
+            restoreFiles: '{{ route("restoreFiles") }}'
         }
     };
 </script>
 <script src="/js/editFile.js"></script>
 <script src="/js/sort.js"></script>
+<script src="/js/move.js"></script>
 
 @endsection

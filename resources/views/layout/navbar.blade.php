@@ -60,7 +60,7 @@
                             </li>
                             <hr class="mx-3 text-gray-300">
                             <li>
-                                <a href="" class="block px-4 py-2 hover:bg-gray-100">Logout</a>
+                                <a href="{{ route('login') }}" class="block px-4 py-2 hover:bg-gray-100">Logout</a>
                             </li>
                         </ul>
                     </div>

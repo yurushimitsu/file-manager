@@ -173,8 +173,7 @@ class FileController extends Controller
 
         $basePath = 'public/trash';
 
-        $trashFolderFileSize = $this->getFolderSize($basePath);
-
+        $docuFolderFileSize = $this->getFolderSize($basePath);
     
         if ($folder) {
             $path = $basePath . '/' . $folder;
@@ -193,7 +192,7 @@ class FileController extends Controller
             $folderSizes[$directory] = $this->getFolderSize($directory);
         }
     
-        return view('dashboard.trash', compact('files', 'directories', 'folderSizes', 'folderExploded', 'currentFolder', 'trashFolderFileSize'));
+        return view('dashboard.trash', compact('files', 'directories', 'folderSizes', 'folderExploded', 'currentFolder', 'docuFolderFileSize'));
     }
 
 
@@ -284,7 +283,7 @@ class FileController extends Controller
 
         // Define paths
         $documentPath = 'public' . $currentFolder . '/' . $itemName;
-        $trashPath = 'public/archive/' . $itemName;
+        $archivePath = 'public/archive/' . $itemName;
 
         // For file handling
         if (!$isFolder) {
@@ -296,7 +295,7 @@ class FileController extends Controller
                     }
 
                     // Move the file to archive
-                    if (Storage::move($documentPath, $trashPath)) {
+                    if (Storage::move($documentPath, $archivePath)) {
                         return response()->json(['success' => true]);
                     } else {
                         return response()->json(['success' => false, 'message' => 'Failed to move file.'], 500);
@@ -309,7 +308,7 @@ class FileController extends Controller
         // For folder handling
         else {
             $folderPath = storage_path('app/public' . $currentFolder . '/' . $itemName);
-            $folderTrashPath = storage_path('app/public/archive/' . $itemName);
+            $folderArchivePath = storage_path('app/public/archive/' . $itemName);
             
             if (File::isDirectory($folderPath)) {
                 try {
@@ -319,7 +318,7 @@ class FileController extends Controller
                     }
 
                     // Move the folder to archive
-                    if (File::move($folderPath, $folderTrashPath)) {
+                    if (File::move($folderPath, $folderArchivePath)) {
                         return response()->json(['success' => true]);
                     } else {
                         return response()->json(['success' => false, 'message' => 'Failed to move folder.'], 500);
@@ -390,5 +389,113 @@ class FileController extends Controller
         }
 
         return response()->json(['success' => false, 'message' => 'Item not found.' . $folderPath], 404);
+    }
+
+    public function restoreFiles(Request $request) {
+        $referrer = $request->headers->get('referer');
+        $currentFolder = urldecode(parse_url($referrer, PHP_URL_PATH));
+
+        $itemName = $request->input('item');  // File or Folder name
+        $isFolder = $request->input('isFolder');  // Is it a folder?
+
+        // Define paths
+        $documentPath = 'public' . $currentFolder . '/' . $itemName;
+        $trashPath = 'public/documents/' . $itemName;
+
+        // For file handling
+        if (!$isFolder) {
+            if (Storage::exists($documentPath)) {
+                try {
+                    // Ensure the trash folder exists
+                    if (!File::exists(storage_path('app/public/documents'))) {
+                        File::makeDirectory(storage_path('app/public/documents'), 0755, true);
+                    }
+
+                    // Move the file to trash
+                    if (Storage::move($documentPath, $trashPath)) {
+                        return response()->json(['success' => true]);
+                    } else {
+                        return response()->json(['success' => false, 'message' => 'Failed to move file.'], 500);
+                    }
+                } catch (\Exception $e) {
+                    return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+                }
+            }
+        }
+        // For folder handling
+        else {
+            $folderPath = storage_path('app/public' . $currentFolder . '/' . $itemName);
+            $folderTrashPath = storage_path('app/public/documents/' . $itemName);
+            
+            if (File::isDirectory($folderPath)) {
+                try {
+                    // Ensure the trash folder exists
+                    if (!File::exists(storage_path('app/public/documents'))) {
+                        File::makeDirectory(storage_path('app/public/documents'), 0755, true);
+                    }
+
+                    // Move the folder to trash
+                    if (File::move($folderPath, $folderTrashPath)) {
+                        return response()->json(['success' => true]);
+                    } else {
+                        return response()->json(['success' => false, 'message' => 'Failed to move folder.'], 500);
+                    }
+                } catch (\Exception $e) {
+                    return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+                }
+            }
+        }
+
+        return response()->json(['success' => false, 'message' => 'Item not found.' . $folderPath], 404);
+    }
+
+    public function deleteFile(Request $request) {
+        $referrer = $request->headers->get('referer');
+        $currentFolder = urldecode(parse_url($referrer, PHP_URL_PATH));
+
+        $itemName = $request->input('item');     // File or Folder name
+        $isFolder = $request->input('isFolder'); // true/false
+        $isEmpty = $request->input('isEmpty'); // true/false
+
+        if ($isEmpty) {
+            $trashPath = storage_path('app/public/trash');
+    
+            try {
+                if (File::exists($trashPath)) {
+                    File::deleteDirectory($trashPath); // Delete the trash folder and its contents
+                    File::makeDirectory($trashPath);   // Recreate empty trash folder if needed
+                    return response()->json(['success' => true, 'message' => 'Trash emptied successfully.']);
+                } else {
+                    return response()->json(['success' => false, 'message' => 'Trash folder not found.'], 404);
+                }
+            } catch (\Exception $e) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            }
+        }
+
+        // Full relative path to the item
+        $relativePath = 'public' . $currentFolder . '/' . $itemName;
+
+        try {
+            if ($isFolder) {
+                $folderPath = storage_path('app/' . $relativePath);
+
+                if (File::isDirectory($folderPath)) {
+                    File::deleteDirectory($folderPath);
+                    return response()->json(['success' => true, 'message' => 'Folder permanently deleted.']);
+                } else {
+                    return response()->json(['success' => false, 'message' => 'Folder not found.'], 404);
+                }
+            } else {
+                if (Storage::exists($relativePath)) {
+                    Storage::delete($relativePath);
+                    return response()->json(['success' => true, 'message' => 'File permanently deleted.']);
+                } else {
+                    return response()->json(['success' => false, 'message' => 'File not found.'], 404);
+                }
+            }
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 }
