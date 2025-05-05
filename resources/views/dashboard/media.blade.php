@@ -1,6 +1,6 @@
 @extends('layout.master')
 
-@section('title', 'Archive')
+@section('title', 'Media')
 
 @section('body')
 
@@ -22,14 +22,14 @@
                             </svg>                              
                         </div>
                     </div>
-                    <a href="{{ route('archive') }}" class="font-bold text-3xl hover:underline mb-2">
-                        Archives
+                    <a href="{{ route('media') }}" class="font-bold text-3xl hover:underline mb-2">
+                        Media
                     </a>
                     @if (!empty($folderExploded))
                         @foreach ($folderExploded as $index => $folderSegment)
                             <!-- Create a link to each folder in the path -->
                             /
-                            <a href="{{ route('archive', ['folder' => implode('/', array_slice($folderExploded, 0, $index + 1))]) }}"
+                            <a href="{{ route('media', ['folder' => implode('/', array_slice($folderExploded, 0, $index + 1))]) }}"
                                 class="cursor-pointer hover:underline 
                                         {{ (isset($currentFolder) && $currentFolder == $folderSegment) ? 'underline font-semibold' : '' }}">
                                     {{ ucfirst($folderSegment) }}
@@ -77,7 +77,7 @@
                     <div id="sortable-files" class="flex flex-wrap justify-center md:justify-start gap-5">
                         @if (!empty($directories) || !empty($files))
                             @foreach ($directories as $directory)
-                                <div class="folder-card grid-view grid grid-cols-1 content-between bg-white rounded-xl p-4 shadow-lg h-45 w-45 select-none cursor-pointer hover:bg-gray-50" data-id="{{ $directory }}" id="folder-{{ basename($directory) }}" ondblclick="window.location.href='{{ route('archive', ['folder' => str_replace('public/archive/', '', $directory)]) }}'" title="{{ basename($directory) }}">
+                                <div class="folder-card grid-view grid grid-cols-1 content-between bg-white rounded-xl p-4 shadow-lg h-45 w-45 select-none cursor-pointer hover:bg-gray-50" data-id="{{ $directory }}" id="folder-{{ basename($directory) }}" ondblclick="window.location.href='{{ route('media', ['folder' => str_replace('public/media/', '', $directory)]) }}'" title="{{ basename($directory) }}">
                                     <div class="flex items-start justify-between">
                                         <div class="bg-[#C8EAFF] rounded-full p-3">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-[#0F52FF]">
@@ -94,15 +94,16 @@
                                                 <!-- Dropdown menu -->
                                                 <div id="docuDropdown-{{ $directory }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
                                                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="docuButton-{{ $directory }}">
-                                                        <li><a href="{{ route('archive', ['folder' => str_replace('public/archive/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
+                                                        <li><a href="{{ route('media', ['folder' => str_replace('public/media/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
                                                         <li>
                                                             <button 
                                                                 class="block px-4 py-2 hover:bg-gray-100 bg-transparent border-0 cursor-pointer"
-                                                                onclick="downloadFolder('{{ route('folders.download', ['folder' => str_replace('public/archive/', '', $directory)]) }}');">
+                                                                onclick="downloadFolder('{{ route('folders.download', ['folder' => str_replace('public/media/', '', $directory)]) }}');">
                                                                 Download
                                                             </button>
                                                         </li>
-                                                        <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="restoreFiles('{{ basename($directory) }}', true)">Restore</button></li>
+                                                        <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="editFolderName('{{ basename($directory) }}')">Edit</button></li>
+                                                        <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToArchive('{{ basename($directory) }}', true)">Archive</button></li>
                                                         <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToTrash('{{ basename($directory) }}', true)">Trash</button></li>                     
                                                     </ul>
                                                 </div>
@@ -136,7 +137,7 @@
                                 </div>
                                 
                                 {{-- List View --}}
-                                <div class="folder-card list-view bg-white rounded-xl shadow-lg h-15 w-full select-none cursor-pointer hover:bg-gray-50 hidden" data-id="{{ $directory }}" id="folderList-{{ basename($directory) }}" ondblclick="window.location.href='{{ route('archive', ['folder' => str_replace('public/archive/', '', $directory)]) }}'" title="{{ basename($directory) }}">
+                                <div class="folder-card list-view bg-white rounded-xl shadow-lg h-15 w-full select-none cursor-pointer hover:bg-gray-50 hidden" data-id="{{ $directory }}" id="folderList-{{ basename($directory) }}" ondblclick="window.location.href='{{ route('media', ['folder' => str_replace('public/media/', '', $directory)]) }}'" title="{{ basename($directory) }}">
                                     <div class="flex items-center justify-between p-3 h-full w-full">
                                         <div class="flex flex-row items-center min-w-0">
                                             <div class="bg-[#C8EAFF] rounded-full p-3 me-3">
@@ -179,15 +180,16 @@
                                                 <!-- Dropdown menu -->
                                                 <div id="docuDropdownList-{{ $directory }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
                                                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="docuButtonList-{{ $directory }}">
-                                                        <li><a href="{{ route('archive', ['folder' => str_replace('public/archive/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
+                                                        <li><a href="{{ route('media', ['folder' => str_replace('public/media/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
                                                         <li>
                                                             <button 
                                                                 class="block px-4 py-2 hover:bg-gray-100 bg-transparent border-0 cursor-pointer"
-                                                                onclick="downloadFolder('{{ route('folders.download', ['folder' => str_replace('public/archive/', '', $directory)]) }}');">
+                                                                onclick="downloadFolder('{{ route('folders.download', ['folder' => str_replace('public/media/', '', $directory)]) }}');">
                                                                 Download
                                                             </button>
                                                         </li>
-                                                        <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="restoreFiles('{{ basename($directory) }}', true)">Restore</button></li>
+                                                        <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="editFolderNameList('{{ basename($directory) }}')">Edit</button></li>
+                                                        <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToArchive('{{ basename($directory) }}', true)">Archive</button></li>
                                                         <li><button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToTrash('{{ basename($directory) }}', true)">Trash</button></li>                     
                                                     </ul>
                                                 </div>
@@ -221,7 +223,10 @@
                                                             <a href="{{ Storage::url($file) }}" target="_blank" class="block px-4 py-2 hover:bg-gray-100">Download</a>
                                                         </li>
                                                         <li>
-                                                            <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="restoreFiles('{{ basename($file) }}', false)">Restore</button>
+                                                            <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="editFileName('{{ basename($file) }}', {{ $index }})">Edit</button>
+                                                        </li>
+                                                        <li>
+                                                            <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToArchive('{{ basename($file) }}', false)">Archive</button>
                                                         </li>
                                                         <li>
                                                             <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToTrash('{{ basename($file) }}', false)">Trash</button>
@@ -299,7 +304,10 @@
                                                             <a href="{{ Storage::url($file) }}" target="_blank" class="block px-4 py-2 hover:bg-gray-100">Download</a>
                                                         </li>
                                                         <li>
-                                                            <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="restoreFiles('{{ basename($file) }}', false)">Restore</button>
+                                                            <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="editFileNameList('{{ basename($file) }}', {{ $index }})">Edit</button>
+                                                        </li>
+                                                        <li>
+                                                            <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToArchive('{{ basename($file) }}', false)">Archive</button>
                                                         </li>
                                                         <li>
                                                             <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="moveToTrash('{{ basename($file) }}', false)">Trash</button>
@@ -343,13 +351,16 @@
         csrfToken: '{{ csrf_token() }}',
         routes: {
             updateFileName: '{{ route("update-file-name") }}',
-            moveToTrash: '{{ route("moveToTrash") }}',
-            restoreFiles: '{{ route("restoreFiles") }}'
+            upload: '{{ route("upload") }}',
+            uplodaCheck: '{{ route("upload.check") }}',
+            moveToArchive: '{{ route("moveToArchive") }}',
+            moveToTrash: '{{ route("moveToTrash") }}'
         }
     };
 </script>
 <script src="{{ asset('js/editFile.js') }}"></script>
 <script src="{{ asset('js/sort.js') }}"></script>
+<script src="{{ asset('js/uploadFile.js') }}"></script>
 <script src="{{ asset('js/move.js') }}"></script>
 
 @endsection

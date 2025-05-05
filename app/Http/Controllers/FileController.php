@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -10,6 +11,66 @@ use ZipArchive;
 
 class FileController extends Controller
 {
+
+    public function showDashboard() {
+        $photos = collect(Storage::disk('public')->allFiles('media/Photos'));
+
+        $docuFolderSize = $this->getFolderSize('public/documents');
+        $mediaFolderSize = $this->getFolderSize('public/media');
+        $archiveFolderSize = $this->getFolderSize('public/archive');
+        $trashFolderSize = $this->getFolderSize('public/trash');
+        $otherFolderSize = $this->getFolderSize('public/others');
+
+        $totalStorage = 1024 * 1024 * 1024 * 1; // Last number is the allotted max size (GB)
+        $usedStorage = $docuFolderSize + $mediaFolderSize + $archiveFolderSize + $trashFolderSize + $otherFolderSize;
+        $usedPercentage = ($usedStorage / $totalStorage) * 100;
+
+        $docuFolderModified = $this->getLastModifiedDate('documents');
+        $mediaFolderModified = $this->getLastModifiedDate('media');
+        $archiveFolderModified = $this->getLastModifiedDate('archive');
+        $trashFolderModified = $this->getLastModifiedDate('trash');
+        $otherFolderModified = $this->getLastModifiedDate('others');
+
+        return view('dashboard.main', [
+            'usedStorage' => $this->formatBytes($usedStorage),
+            'totalStorage' => $this->formatBytes($totalStorage),
+            'usedPercentage' => round($usedPercentage),
+            'photos' => $photos,
+            'docuFolderSize' => $docuFolderSize,
+            'mediaFolderSize' => $mediaFolderSize,
+            'archiveFolderSize' => $archiveFolderSize,
+            'trashFolderSize' => $trashFolderSize,
+            'otherFolderSize' => $otherFolderSize,
+            'docuFolderModified' => $docuFolderModified,
+            'mediaFolderModified' => $mediaFolderModified,
+            'archiveFolderModified' => $archiveFolderModified,
+            'otherFolderModified' => $otherFolderModified,
+        ]);
+    }
+
+    private function formatBytes($bytes, $precision = 2) {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+        $bytes /= pow(1024, $pow);
+        return round($bytes, $precision) . ' ' . $units[$pow];
+    }
+
+    private function getLastModifiedDate($folderPath) {
+        $files = Storage::disk('public')->allFiles($folderPath);
+
+        if (empty($files)) {
+            return null;
+        }
+
+        $lastModifiedTimestamp = collect($files)
+            ->map(fn($file) => Storage::disk('public')->lastModified($file))
+            ->max();
+
+        return Carbon::createFromTimestamp($lastModifiedTimestamp)->format('h:i A | d M');
+    }
+
     public function showDocuments($folder = null) {
         if (!File::exists(storage_path('app/public/documents'))) {
             File::makeDirectory(storage_path('app/public/documents'), 0755, true);
@@ -40,7 +101,7 @@ class FileController extends Controller
     }
 
     public function downloadFolder(Request $request) {
-        $folder = $request->query('folder'); // e.g., "some-folder"
+        $folder = $request->query('folder');
         
         $referrer = $request->headers->get('referer');
         $currentFolder = urldecode(parse_url($referrer, PHP_URL_PATH));
@@ -137,6 +198,35 @@ class FileController extends Controller
         }
     }
 
+    public function showMedia($folder = null) {
+        if (!File::exists(storage_path('app/public/media'))) {
+            File::makeDirectory(storage_path('app/public/media'), 0755, true);
+        }
+
+        $basePath = 'public/media';
+
+        $docuFolderFileSize = $this->getFolderSize($basePath);
+    
+        if ($folder) {
+            $path = $basePath . '/' . $folder;
+        } else {
+            $path = $basePath;
+        }
+        
+        $folderExploded = $folder ? explode('/', $folder) : [];
+        $currentFolder = end($folderExploded);
+    
+        $files = Storage::files($path);
+        $directories = Storage::directories($path);
+    
+        $folderSizes = [];
+        foreach ($directories as $directory) {
+            $folderSizes[$directory] = $this->getFolderSize($directory);
+        }
+    
+        return view('dashboard.media', compact('files', 'directories', 'folderSizes', 'folderExploded', 'currentFolder', 'docuFolderFileSize'));
+    }
+
     public function showArchive($folder = null) {
         if (!File::exists(storage_path('app/public/archive'))) {
             File::makeDirectory(storage_path('app/public/archive'), 0755, true);
@@ -165,6 +255,37 @@ class FileController extends Controller
     
         return view('dashboard.archive', compact('files', 'directories', 'folderSizes', 'folderExploded', 'currentFolder', 'docuFolderFileSize'));
     }
+
+    public function showOthers($folder = null) {
+        if (!File::exists(storage_path('app/public/others'))) {
+            File::makeDirectory(storage_path('app/public/others'), 0755, true);
+        }
+
+        $basePath = 'public/others';
+
+        $docuFolderFileSize = $this->getFolderSize($basePath);
+    
+        if ($folder) {
+            $path = $basePath . '/' . $folder;
+        } else {
+            $path = $basePath;
+        }
+        
+        $folderExploded = $folder ? explode('/', $folder) : [];
+        $currentFolder = end($folderExploded);
+    
+        $files = Storage::files($path);
+        $directories = Storage::directories($path);
+    
+        $folderSizes = [];
+        foreach ($directories as $directory) {
+            $folderSizes[$directory] = $this->getFolderSize($directory);
+        }
+    
+        return view('dashboard.others', compact('files', 'directories', 'folderSizes', 'folderExploded', 'currentFolder', 'docuFolderFileSize'));
+    }
+
+    
 
     public function showTrash($folder = null) {
         if (!File::exists(storage_path('app/public/trash'))) {
@@ -209,36 +330,92 @@ class FileController extends Controller
 
     public function upload(Request $request) {
         $request->validate([
-            'file' => 'required|file|max:10240',
+            'file' => 'required|file',
         ]);
-
+        
         $referrer = $request->headers->get('referer');
         $currentFolder = urldecode(parse_url($referrer, PHP_URL_PATH));
-
+        
         $relativePath = $request->input('relativePath'); // folder1/file.txt
-        $storagePath = 'public' . $currentFolder . '/' . dirname($relativePath);
         $fileName = basename($relativePath);
 
+        $documentMimeTypes = [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'text/plain',
+        ];
+        
+        $mediaTypesPhotos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $mediaTypesVideos = ['video/mp4', 'video/avi', 'video/mkv', 'video/webm', 'video/x-matroska'];
+        
+        $allMediaTypes = array_merge($mediaTypesPhotos, $mediaTypesVideos);
+        $fileMimeType = $request->file('file')->getMimeType();
+        
+        if ($currentFolder === '/dashboard') {
+            if (in_array($fileMimeType, $documentMimeTypes)) {
+                $storagePath = 'public/documents/' . dirname($relativePath);
+            } elseif (in_array($fileMimeType, $mediaTypesPhotos)) {
+                $storagePath = 'public/media/Photos/' . dirname($relativePath);
+            } elseif (in_array($fileMimeType, $mediaTypesVideos)) {
+                $storagePath = 'public/media/Videos/' . dirname($relativePath);
+            } else {
+                // If the file is not a photo, video, or document, store it in the "other" folder
+                $storagePath = 'public/others/' . dirname($relativePath);
+            }
+        } elseif ($currentFolder !== '/media') {
+            if (in_array($fileMimeType, $mediaTypesPhotos)) {
+                $storagePath = 'public/media/Photos/' . dirname($relativePath);
+            } elseif (in_array($fileMimeType, $mediaTypesVideos)) {
+                $storagePath = 'public/media/Videos/' . dirname($relativePath);
+            } elseif (in_array($fileMimeType, $documentMimeTypes)) {
+                $storagePath = 'public/documents/' . dirname($relativePath);
+            } else {
+                // If the file is not a photo, video, or document, store it in the "other" folder
+                $storagePath = 'public/others/' . dirname($relativePath);
+            }
+        } else {
+            if (in_array($fileMimeType, $documentMimeTypes)) {
+                $storagePath = 'public/documents/' . dirname($relativePath);
+            } elseif (in_array($fileMimeType, $mediaTypesPhotos)) {
+                $storagePath = 'public/media/Photos/' . dirname($relativePath);
+            } elseif (in_array($fileMimeType, $mediaTypesVideos)) {
+                $storagePath = 'public/media/Videos/' . dirname($relativePath);
+            } else {
+                $storagePath = 'public/others/' . dirname($relativePath);
+            }
+        }
+        
+        // Create the directory if it doesn't exist
         Storage::makeDirectory($storagePath);
-
+        
+        // Store the file in the determined storage path
         $storedPath = $request->file('file')->storeAs($storagePath, $fileName);
-
+        
         return response()->json([
             'success' => true,
             'filename' => $fileName,
             'path' => $storedPath,
             'url' => Storage::url($storedPath),
-        ]);
+        ]);        
     }
 
-    public function checkIfExists(Request $request)
-    {
+    public function checkIfExists(Request $request) {
         $relativePath = $request->input('relativePath');
 
         $referrer = $request->headers->get('referer');
         $currentFolder = urldecode(parse_url($referrer, PHP_URL_PATH));
 
-        $fullPath = 'public' . $currentFolder . '/' . $relativePath;
+        // If user uploaded in the dashboard
+        if ($currentFolder == '/dashboard') {
+            $fullPath = 'public/documents/' . $relativePath;
+        } else {
+            $fullPath = 'public' . $currentFolder . '/' . $relativePath;
+        }
 
         return response()->json([
             'exists' => Storage::exists($fullPath),
@@ -394,25 +571,47 @@ class FileController extends Controller
     public function restoreFiles(Request $request) {
         $referrer = $request->headers->get('referer');
         $currentFolder = urldecode(parse_url($referrer, PHP_URL_PATH));
+        $itemName = $request->input('item');        // File or Folder name
+        $isFolder = $request->input('isFolder');    // Boolean: is it a folder?
 
-        $itemName = $request->input('item');  // File or Folder name
-        $isFolder = $request->input('isFolder');  // Is it a folder?
+        // Define supported MIME types
+        $documentMimeTypes = [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'text/plain',
+        ];
+        $mediaTypesPhotos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $mediaTypesVideos = ['video/mp4', 'video/avi', 'video/mkv', 'video/webm', 'video/x-matroska'];
 
-        // Define paths
-        $documentPath = 'public' . $currentFolder . '/' . $itemName;
-        $trashPath = 'public/documents/' . $itemName;
+        $trashPath = 'public' . $currentFolder . '/' . $itemName;
 
-        // For file handling
+        // === FILE RESTORE ===
         if (!$isFolder) {
-            if (Storage::exists($documentPath)) {
-                try {
-                    // Ensure the trash folder exists
-                    if (!File::exists(storage_path('app/public/documents'))) {
-                        File::makeDirectory(storage_path('app/public/documents'), 0755, true);
-                    }
+            if (Storage::exists($trashPath)) {
+                $absoluteTrashPath = storage_path('app/' . $trashPath);
+                $mimeType = mime_content_type($absoluteTrashPath);
 
-                    // Move the file to trash
-                    if (Storage::move($documentPath, $trashPath)) {
+                // Determine restore path based on MIME type
+                if (in_array($mimeType, $documentMimeTypes)) {
+                    $restorePath = 'public/documents/' . $itemName;
+                } elseif (in_array($mimeType, $mediaTypesPhotos)) {
+                    $restorePath = 'public/media/Photos/' . $itemName;
+                } elseif (in_array($mimeType, $mediaTypesVideos)) {
+                    $restorePath = 'public/media/Videos/' . $itemName;
+                } else {
+                    $restorePath = 'public/others/' . $itemName;
+                }
+
+                // Ensure destination directory exists
+                Storage::makeDirectory(dirname($restorePath));
+
+                try {
+                    if (Storage::move($trashPath, $restorePath)) {
                         return response()->json(['success' => true]);
                     } else {
                         return response()->json(['success' => false, 'message' => 'Failed to move file.'], 500);
@@ -422,31 +621,51 @@ class FileController extends Controller
                 }
             }
         }
-        // For folder handling
+
+        // === FOLDER RESTORE ===
         else {
             $folderPath = storage_path('app/public' . $currentFolder . '/' . $itemName);
-            $folderTrashPath = storage_path('app/public/documents/' . $itemName);
-            
-            if (File::isDirectory($folderPath)) {
-                try {
-                    // Ensure the trash folder exists
-                    if (!File::exists(storage_path('app/public/documents'))) {
-                        File::makeDirectory(storage_path('app/public/documents'), 0755, true);
-                    }
+            $files = File::allFiles($folderPath);
 
-                    // Move the folder to trash
-                    if (File::move($folderPath, $folderTrashPath)) {
+            if (count($files) > 0) {
+                $firstFile = $files[0];
+                $mimeType = File::mimeType($firstFile);
+
+                // Determine restore path based on MIME type of first file
+                if (in_array($mimeType, $documentMimeTypes)) {
+                    $restorePath = 'public/documents/' . $itemName;
+                } elseif (in_array($mimeType, $mediaTypesPhotos)) {
+                    $restorePath = 'public/media/Photos/' . $itemName;
+                } elseif (in_array($mimeType, $mediaTypesVideos)) {
+                    $restorePath = 'public/media/Videos/' . $itemName;
+                } else {
+                    $restorePath = 'public/others/' . $itemName;
+                }
+            } else {
+                // Folder is empty, send to "others"
+                $restorePath = 'public/others/' . $itemName;
+            }
+
+            try {
+                if (File::isDirectory($folderPath)) {
+                    $restoreAbsolutePath = storage_path('app/' . $restorePath);
+
+                    // Ensure destination folder exists
+                    File::makeDirectory(dirname($restoreAbsolutePath), 0755, true, true);
+
+                    if (File::copyDirectory($folderPath, $restoreAbsolutePath)) {
+                        File::deleteDirectory($folderPath); // Clean up original
                         return response()->json(['success' => true]);
                     } else {
-                        return response()->json(['success' => false, 'message' => 'Failed to move folder.'], 500);
+                        return response()->json(['success' => false, 'message' => 'Failed to restore folder.'], 500);
                     }
-                } catch (\Exception $e) {
-                    return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
                 }
+            } catch (\Exception $e) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
             }
         }
 
-        return response()->json(['success' => false, 'message' => 'Item not found.' . $folderPath], 404);
+        return response()->json(['success' => false, 'message' => 'Item not found.'], 404);
     }
 
     public function deleteFile(Request $request) {

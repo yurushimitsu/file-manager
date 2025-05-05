@@ -340,7 +340,7 @@
         }
     };
 </script>
-<script src="/js/sort.js"></script>
-<script src="/js/move.js"></script>
+<script src="{{ asset('js/sort.js') }}"></script>
+<script src="{{ asset('js/move.js') }}"></script>
 
 @endsection

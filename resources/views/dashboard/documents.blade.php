@@ -15,7 +15,7 @@
         <div class="container">
             <div class="p-1">
                 <div id="drop-zone" class="relative m-5 p-8 bg-[#E8F8FF] rounded-xl min-h-150">
-                    <!-- Add this inside your drop zone -->
+                    <!-- Drop zone overlay -->
                     <div id="drag-overlay" class="absolute inset-0 rounded-xl ring-2 ring-blue-400 bg-blue-50 bg-opacity-75 pt-10 flex justify-center text-blue-700 font-semibold text-lg hidden z-10">
                         Drop a file to upload
                         <div id="closeUpload" class="absolute cursor-pointer hover:bg-blue-200 rounded-md p-1 right-10 top-10">
@@ -98,11 +98,6 @@
                                                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="docuButton-{{ $directory }}">
                                                         <li><a href="{{ route('documents', ['folder' => str_replace('public/documents/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
                                                         <li>
-                                                            {{-- <a href="{{ route('folders.download', ['folder' => str_replace('public/documents/', '', $directory)]) }}"
-                                                               class="block px-4 py-2 hover:bg-gray-100"
-                                                               onclick="event.stopPropagation();">
-                                                               Download
-                                                            </a> --}}
                                                             <button 
                                                                 class="block px-4 py-2 hover:bg-gray-100 bg-transparent border-0 cursor-pointer"
                                                                 onclick="downloadFolder('{{ route('folders.download', ['folder' => str_replace('public/documents/', '', $directory)]) }}');">
@@ -366,14 +361,12 @@
     };
 </script>
 
-<script src="/js/editFile.js"></script>
-<script src="/js/sort.js"></script>
-<script src="/js/uploadFile.js"></script>
-<script src="/js/move.js"></script>
+<script src="{{ asset('js/editFile.js') }}"></script>
+<script src="{{ asset('js/sort.js') }}"></script>
+<script src="{{ asset('js/uploadFile.js') }}"></script>
+<script src="{{ asset('js/move.js') }}"></script>
 
 <script>
-    
-
     // Initialize SortableJS for dragging and dropping
     const sortable = new Sortable(document.getElementById('sortable-files'), {
         group: 'files-and-folders',  // Define the group for drag-and-drop

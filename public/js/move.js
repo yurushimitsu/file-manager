@@ -36,6 +36,7 @@ function moveToArchive(itemName, isFolder) {
                             document.getElementById('folderList-' + itemName).remove();
                         } else {
                             document.getElementById('file-' + itemName).remove();
+                            document.getElementById('fileList-' + itemName).remove();
                         }
                     });
                 } else {
@@ -96,6 +97,7 @@ function moveToTrash(itemName, isFolder) {
                             document.getElementById('folderList-' + itemName).remove();
                         } else {
                             document.getElementById('file-' + itemName).remove();
+                            document.getElementById('fileList-' + itemName).remove();
                         }
                     });
                 } else {
@@ -156,12 +158,13 @@ function restoreFiles(itemName, isFolder) {
                             document.getElementById('folderList-' + itemName).remove();
                         } else {
                             document.getElementById('file-' + itemName).remove();
+                            document.getElementById('fileList-' + itemName).remove();
                         }
                     });
                 } else {
                     Swal.fire({
                         title: "Error!",
-                        text: "There was an issue moving the item to trash: " + data.message,
+                        text: "There was an issue moving restoring the files: " + data.message,
                         icon: "error"
                     });
                 }
@@ -219,6 +222,7 @@ function deleteFile(itemName, isFolder, isEmpty) {
                                 document.getElementById('folderList-' + itemName)?.remove();
                             } else {
                                 document.getElementById('file-' + itemName)?.remove();
+                                document.getElementById('fileList-' + itemName).remove();
                             }
                         }
                     });

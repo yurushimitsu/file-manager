@@ -23,20 +23,20 @@
             </a>
         </li>
         <li>
-            <a href="#" class="flex items-center justify-center p-2 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-200 group">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-gray-500 group-hover:text-white">
+            <a href="#" class="flex items-center justify-center p-2 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white {{ (Route::is('media')) ? 'bg-[#5BD0F4] text-white' : '' }} focus:outline-none focus:ring-2 focus:ring-gray-200 group">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-gray-500 group-hover:text-white {{ (Route::is('media')) ? 'text-white' : '' }}">
                     <path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd" />
                 </svg>
             </a>
         </li>
-        <li>
+        {{-- <li>
             <a href="#" class="flex items-center justify-center p-2 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-200 group">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-gray-500 group-hover:text-white">
                     <path d="M7.5 3.375c0-1.036.84-1.875 1.875-1.875h.375a3.75 3.75 0 0 1 3.75 3.75v1.875C13.5 8.161 14.34 9 15.375 9h1.875A3.75 3.75 0 0 1 21 12.75v3.375C21 17.16 20.16 18 19.125 18h-9.75A1.875 1.875 0 0 1 7.5 16.125V3.375Z" />
                     <path d="M15 5.25a5.23 5.23 0 0 0-1.279-3.434 9.768 9.768 0 0 1 6.963 6.963A5.23 5.23 0 0 0 17.25 7.5h-1.875A.375.375 0 0 1 15 7.125V5.25ZM4.875 6H6v10.125A3.375 3.375 0 0 0 9.375 19.5H16.5v1.125c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 3 20.625V7.875C3 6.839 3.84 6 4.875 6Z" />
                 </svg>
             </a>
-        </li>
+        </li> --}}
         <li>
             <a href="{{ route('archive') }}" class="flex items-center justify-center p-2 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white {{ (Route::is('archive')) ? 'bg-[#5BD0F4] text-white' : '' }} focus:outline-none focus:ring-2 focus:ring-gray-200 group">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-gray-500 group-hover:text-white {{ (Route::is('archive')) ? 'text-white' : '' }}">
@@ -46,16 +46,16 @@
             </a>
         </li>
         <li>
-            <a href="{{ route('trash') }}" class="flex items-center justify-center p-2 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white {{ (Route::is('trash')) ? 'bg-[#5BD0F4] text-white' : '' }} focus:outline-none focus:ring-2 focus:ring-gray-200 group">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-gray-500 group-hover:text-white {{ (Route::is('trash')) ? 'text-white' : '' }}">
-                    <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd" />
+            <a href="#" class="flex items-center justify-center p-2 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-200 group">
+                <svg class="shrink-0 w-5 h-5 text-gray-500 group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
+                    <path d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z"/>
                 </svg>
             </a>
         </li>
         <li>
-            <a href="#" class="flex items-center justify-center p-2 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-200 group">
-                <svg class="shrink-0 w-5 h-5 text-gray-500 group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
-                    <path d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z"/>
+            <a href="{{ route('trash') }}" class="flex items-center justify-center p-2 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white {{ (Route::is('trash')) ? 'bg-[#5BD0F4] text-white' : '' }} focus:outline-none focus:ring-2 focus:ring-gray-200 group">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-gray-500 group-hover:text-white {{ (Route::is('trash')) ? 'text-white' : '' }}">
+                    <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd" />
                 </svg>
             </a>
         </li>
@@ -84,14 +84,14 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="flex items-center p-3 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-200 group">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-gray-500 group-hover:text-white">
+                <a href="{{ Route('media') }}" class="flex items-center p-3 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white {{ (Route::is('media')) ? 'bg-[#5BD0F4] text-white' : '' }} focus:outline-none focus:ring-2 focus:ring-gray-200 group">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-gray-500 group-hover:text-white {{ (Route::is('media')) ? 'text-white' : '' }}">
                         <path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd" />
                     </svg>
                    <span class="ms-3">Media</span>
                 </a>
             </li>
-            <li>
+            {{-- <li>
                 <a href="#" class="flex items-center p-3 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-200 group">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-gray-500 group-hover:text-white">
                         <path d="M7.5 3.375c0-1.036.84-1.875 1.875-1.875h.375a3.75 3.75 0 0 1 3.75 3.75v1.875C13.5 8.161 14.34 9 15.375 9h1.875A3.75 3.75 0 0 1 21 12.75v3.375C21 17.16 20.16 18 19.125 18h-9.75A1.875 1.875 0 0 1 7.5 16.125V3.375Z" />
@@ -99,7 +99,7 @@
                     </svg>
                    <span class="ms-3">Reviewers</span>
                 </a>
-            </li>
+            </li> --}}
             <li>
                 <a href="{{ route('archive') }}" class="flex items-center p-3 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white {{ (Route::is('archive')) ? 'bg-[#5BD0F4] text-white' : '' }} focus:outline-none focus:ring-2 focus:ring-gray-200 group">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-gray-500 group-hover:text-white {{ (Route::is('archive')) ? 'text-white' : '' }}">
@@ -110,19 +110,19 @@
                 </a>
             </li>
             <li>
+                <a href="{{ route('others') }}" class="flex items-center p-3 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white {{ (Route::is('others')) ? 'bg-[#5BD0F4] text-white' : '' }} focus:outline-none focus:ring-2 focus:ring-gray-200 group">
+                    <svg class="shrink-0 w-5 h-5 text-gray-500 group-hover:text-white {{ (Route::is('others')) ? 'text-white' : '' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
+                        <path d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z"/>
+                    </svg>
+                   <span class="ms-3">Others</span>
+                </a>
+            </li>
+            <li>
                 <a href="{{ route('trash') }}" class="flex items-center p-3 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white {{ (Route::is('trash')) ? 'bg-[#5BD0F4] text-white' : '' }} focus:outline-none focus:ring-2 focus:ring-gray-200 group">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-gray-500 group-hover:text-white {{ (Route::is('trash')) ? 'text-white' : '' }}">
                         <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd" />
                     </svg>
                     <span class="ms-3">Trash</span>
-                </a>
-            </li>
-            <li>
-                <a href="#" class="flex items-center p-3 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-200 group">
-                    <svg class="shrink-0 w-5 h-5 text-gray-500 group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
-                        <path d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z"/>
-                    </svg>
-                   <span class="ms-3">Others</span>
                 </a>
             </li>
         </ul>

@@ -42,26 +42,35 @@
     <div class="ml-15 lg:ml-50 mt-20 flex justify-center">
         <div class="container">
             <div class="p-1">
-                <div class="m-5 p-5 bg-[#E8F8FF] rounded-xl">
+                <div id="drop-zone" class="relative m-5 p-5 bg-[#E8F8FF] rounded-xl">
+                    <!-- Drop zone overlay -->
+                    <div id="drag-overlay" class="absolute inset-0 rounded-xl ring-2 ring-blue-400 bg-blue-50 bg-opacity-75 pt-10 flex justify-center text-blue-700 font-semibold text-lg hidden z-10">
+                        Drop a file to upload
+                        <div id="closeUpload" class="absolute cursor-pointer hover:bg-blue-200 rounded-md p-1 right-10 top-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>                              
+                        </div>
+                    </div>
                     <div class="grid grid-flow-row lg:grid-rows-4 md:grid-cols-3 lg:grid-cols-5 gap-4">
                         <div class="md:col-span-1 lg:col-span-2 lg:row-span-1 order-1 md:order-1 lg:order-1 place-items-center">
                             <div class="flex items-center justify-center bg-[#9CCBFF] rounded-xl shadow-lg w-full h-full">
                                 <div class="flex flex-col lg:flex-row items-center justify-center text-gray-900 text-xs py-4">
-                                    <div class="radial-progress md:me-5" style="--value:37; --size:7rem; --thickness:7px;">
+                                    <div class="radial-progress md:me-5" style="--value:{{ $usedPercentage }}; --size:7rem; --thickness:7px;">
                                         <div class="flex flex-col text-center">
-                                            <span class="font-bold text-lg">37%</span>
+                                            <span class="font-bold text-lg">{{ $usedPercentage }}%</span>
                                             <span class="text-md">Space Used</span>
                                         </div>
                                     </div>
                                     <div class="flex flex-col">
                                         <span class="font-bold text-xl">Available Storage</span>
-                                        <span class="text-md">123/123</span>
+                                        <span class="text-md">{{ $usedStorage }} / {{ $totalStorage }}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="lg:col-span-1 lg:row-span-1 order-2 md:order-3 lg:order-2 place-items-center">
+                        <div class="lg:col-span-1 lg:row-span-1 order-2 md:order-3 lg:order-2 place-items-center cursor-pointer select-none" ondblclick="window.location.href='{{ route('documents') }}'">
                             <div class="flex relative">
                                 <div class="inverted-radius flex items-end justify-center pb-7">
                                     <div class="text-center mx-5 w-full">
@@ -72,7 +81,7 @@
                                             Last Update
                                         </div>
                                         <div class="text-gray-900 text-xs pt-2">
-                                            11:00 AM. 02 Dec
+                                            {{ $docuFolderModified ?? 'N/A' }}
                                         </div>
                                     </div>
                                 </div>
@@ -82,13 +91,27 @@
                                         <path d="M12.971 1.816A5.23 5.23 0 0 1 14.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 0 1 3.434 1.279 9.768 9.768 0 0 0-6.963-6.963Z" />
                                     </svg>    
                                 </div>
-                                <div class="absolute top-3 right-9 text-xs font-medium">
-                                    7GB
+                                <div class="absolute top-3 right-5 text-xs font-medium">
+                                    @php
+                                        $size = $docuFolderSize; // Total size in bytes
+                                
+                                        // Convert bytes to human-readable format
+                                        if ($size >= 1073741824) {
+                                            $size = number_format($size / 1073741824, 2) . ' GB';
+                                        } elseif ($size >= 1048576) {
+                                            $size = number_format($size / 1048576, 2) . ' MB';
+                                        } elseif ($size >= 1024) {
+                                            $size = number_format($size / 1024, 2) . ' KB';
+                                        } else {
+                                            $size = $size . ' bytes';
+                                        }
+                                    @endphp
+                                    {{ $size }}
                                 </div>
                             </div>
                         </div>
 
-                        <div class="lg:col-span-1 lg:row-span-1 order-3 md:order-4 lg:order-3 place-items-center">
+                        <div class="lg:col-span-1 lg:row-span-1 order-3 md:order-4 lg:order-3 place-items-center cursor-pointer select-none" ondblclick="window.location.href='{{ route('media') }}'">
                             <div class="flex relative">
                                 <div class="inverted-radius flex items-end justify-center pb-7">
                                     <div class="text-center mx-5 w-full">
@@ -99,7 +122,7 @@
                                             Last Update
                                         </div>
                                         <div class="text-gray-900 text-xs pt-2">
-                                            11:00 AM. 02 Dec
+                                            {{ $mediaFolderModified ?? 'N/A' }}
                                         </div>
                                     </div>
                                 </div>
@@ -108,35 +131,63 @@
                                         <path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd" />
                                     </svg>  
                                 </div>
-                                <div class="absolute top-3 right-9 text-xs font-medium">
-                                    15GB
+                                <div class="absolute top-3 right-5 text-xs font-medium">
+                                    @php
+                                        $size = $mediaFolderSize; // Total size in bytes
+                                
+                                        // Convert bytes to human-readable format
+                                        if ($size >= 1073741824) {
+                                            $size = number_format($size / 1073741824, 2) . ' GB';
+                                        } elseif ($size >= 1048576) {
+                                            $size = number_format($size / 1048576, 2) . ' MB';
+                                        } elseif ($size >= 1024) {
+                                            $size = number_format($size / 1024, 2) . ' KB';
+                                        } else {
+                                            $size = $size . ' bytes';
+                                        }
+                                    @endphp
+                                    {{ $size }}
                                 </div>
                             </div>
                         </div>
 
-                        <div class="lg:col-span-1 lg:row-span-1 order-4 md:order-5 lg:order-4 place-items-center">
+                        <div class="lg:col-span-1 lg:row-span-1 order-4 md:order-5 lg:order-4 place-items-center cursor-pointer select-none" ondblclick="window.location.href='{{ route('archive') }}'">
                             <div class="flex relative">
                                 <div class="inverted-radius flex items-end justify-center pb-7">
                                     <div class="text-center mx-5 w-full">
                                         <div class="text-gray-900 text-sm font-medium border-b border-gray-300 w-full pb-2">
-                                            Reviewers
+                                            Archive
                                         </div>
                                         <div class="text-gray-400 text-xs font-light pt-2">
                                             Last Update
                                         </div>
                                         <div class="text-gray-900 text-xs pt-2">
-                                            11:00 AM. 02 Dec
+                                            {{ $archiveFolderModified ?? 'N/A' }}
                                         </div>
                                     </div>
                                 </div>
                                 <div class="absolute top-0 left-0 rounded-full bg-[#DA8AFF] p-3">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-white">
-                                        <path d="M7.5 3.375c0-1.036.84-1.875 1.875-1.875h.375a3.75 3.75 0 0 1 3.75 3.75v1.875C13.5 8.161 14.34 9 15.375 9h1.875A3.75 3.75 0 0 1 21 12.75v3.375C21 17.16 20.16 18 19.125 18h-9.75A1.875 1.875 0 0 1 7.5 16.125V3.375Z" />
-                                        <path d="M15 5.25a5.23 5.23 0 0 0-1.279-3.434 9.768 9.768 0 0 1 6.963 6.963A5.23 5.23 0 0 0 17.25 7.5h-1.875A.375.375 0 0 1 15 7.125V5.25ZM4.875 6H6v10.125A3.375 3.375 0 0 0 9.375 19.5H16.5v1.125c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 3 20.625V7.875C3 6.839 3.84 6 4.875 6Z" />
-                                    </svg> 
+                                        <path d="M3.375 3C2.339 3 1.5 3.84 1.5 4.875v.75c0 1.036.84 1.875 1.875 1.875h17.25c1.035 0 1.875-.84 1.875-1.875v-.75C22.5 3.839 21.66 3 20.625 3H3.375Z" />
+                                        <path fill-rule="evenodd" d="m3.087 9 .54 9.176A3 3 0 0 0 6.62 21h10.757a3 3 0 0 0 2.995-2.824L20.913 9H3.087Zm6.163 3.75A.75.75 0 0 1 10 12h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
+                                    </svg>
                                 </div>
-                                <div class="absolute top-3 right-9 text-xs font-medium">
-                                    11GB
+                                <div class="absolute top-3 right-5 text-xs font-medium">
+                                    @php
+                                        $size = $archiveFolderSize; // Total size in bytes
+                                
+                                        // Convert bytes to human-readable format
+                                        if ($size >= 1073741824) {
+                                            $size = number_format($size / 1073741824, 2) . ' GB';
+                                        } elseif ($size >= 1048576) {
+                                            $size = number_format($size / 1048576, 2) . ' MB';
+                                        } elseif ($size >= 1024) {
+                                            $size = number_format($size / 1024, 2) . ' KB';
+                                        } else {
+                                            $size = $size . ' bytes';
+                                        }
+                                    @endphp
+                                    {{ $size }}
                                 </div>
                             </div>
                         </div>
@@ -209,50 +260,29 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="md:col-span-3 lg:col-span-2 lg:row-span-3 order-8 md:order-8 lg:order-6 place-items-center">
-                            <div class=" flex flex-col w-full h-full">
+                            <div class="flex flex-col w-full h-full">
                                 <div class="font-medium text-lg">Files</div>
                                 <div class="flex flex-col bg-white rounded-xl w-full h-full p-3">
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <div class="grid gap-4">
-                                            <div>
-                                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image.jpg" alt="">
+                                        @foreach($photos->chunk(1) as $column) <!-- Chunk images into sets of 4 -->
+                                            <div class="grid gap-4">
+                                                @foreach($column as $photo)
+                                                    <div>
+                                                        <!-- Display the image -->
+                                                        <img class="h-auto max-w-full rounded-lg" 
+                                                             src="{{ asset('storage/' . $photo) }}" alt="">
+                                                    </div>
+                                                @endforeach
                                             </div>
-                                            <div>
-                                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-1.jpg" alt="">
-                                            </div>
-                                            <div>
-                                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-2.jpg" alt="">
-                                            </div>
-                                        </div>
-                                        <div class="grid gap-4">
-                                            <div>
-                                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-3.jpg" alt="">
-                                            </div>
-                                            <div>
-                                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-4.jpg" alt="">
-                                            </div>
-                                            <div>
-                                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-5.jpg" alt="">
-                                            </div>
-                                        </div>
-                                        <div class="grid gap-4">
-                                            <div>
-                                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-6.jpg" alt="">
-                                            </div>
-                                            <div>
-                                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-7.jpg" alt="">
-                                            </div>
-                                            <div>
-                                                <img class="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image-8.jpg" alt="">
-                                            </div>
-                                        </div>
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="lg:col-span-1 lg:row-span-1 order-5 md:order-6 lg:order-7 place-items-center">
+                        <div class="lg:col-span-1 lg:row-span-1 order-5 md:order-6 lg:order-7 place-items-center cursor-pointer select-none" ondblclick="window.location.href='{{ route('others') }}'">
                             <div class="flex relative">
                                 <div class="inverted-radius flex items-end justify-center pb-7">
                                     <div class="text-center mx-5 w-full">
@@ -263,7 +293,7 @@
                                             Last Update
                                         </div>
                                         <div class="text-gray-900 text-xs pt-2">
-                                            11:00 AM. 02 Dec
+                                            {{ $otherFolderModified ?? 'N/A' }}
                                         </div>
                                     </div>
                                 </div>
@@ -272,33 +302,61 @@
                                         <path d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z"/>
                                     </svg>
                                 </div>
-                                <div class="absolute top-3 right-9 text-xs font-medium">
-                                    7GB
+                                <div class="absolute top-3 right-5 text-xs font-medium">
+                                    @php
+                                        $size = $otherFolderSize; // Total size in bytes
+                                
+                                        // Convert bytes to human-readable format
+                                        if ($size >= 1073741824) {
+                                            $size = number_format($size / 1073741824, 2) . ' GB';
+                                        } elseif ($size >= 1048576) {
+                                            $size = number_format($size / 1048576, 2) . ' MB';
+                                        } elseif ($size >= 1024) {
+                                            $size = number_format($size / 1024, 2) . ' KB';
+                                        } else {
+                                            $size = $size . ' bytes';
+                                        }
+                                    @endphp
+                                    {{ $size }}
                                 </div>
                             </div>
                         </div>
-                        <div class="lg:col-span-1 lg:row-span-1 order-6 md:order-7 lg:order-8 place-items-center">
+                        <div class="lg:col-span-1 lg:row-span-1 order-6 md:order-7 lg:order-8 place-items-center cursor-pointer select-none" ondblclick="window.location.href='{{ route('trash') }}'">
                             <div class="flex relative">
                                 <div class="inverted-radius flex items-end justify-center pb-7">
                                     <div class="text-center mx-5 w-full">
                                         <div class="text-gray-900 text-sm font-medium border-b border-gray-300 w-full pb-2">
-                                            Folders
+                                            Trash
                                         </div>
                                         <div class="text-gray-400 text-xs font-light pt-2">
                                             Last Update
                                         </div>
                                         <div class="text-gray-900 text-xs pt-2">
-                                            11:00 AM. 02 Dec
+                                            {{ $trashFolderModified ?? 'N/A' }}
                                         </div>
                                     </div>
                                 </div>
                                 <div class="absolute top-0 left-0 rounded-full bg-[#0F52FF] p-3">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-white">
-                                        <path d="M19.906 9c.382 0 .749.057 1.094.162V9a3 3 0 0 0-3-3h-3.879a.75.75 0 0 1-.53-.22L11.47 3.66A2.25 2.25 0 0 0 9.879 3H6a3 3 0 0 0-3 3v3.162A3.756 3.756 0 0 1 4.094 9h15.812ZM4.094 10.5a2.25 2.25 0 0 0-2.227 2.568l.857 6A2.25 2.25 0 0 0 4.951 21H19.05a2.25 2.25 0 0 0 2.227-1.932l.857-6a2.25 2.25 0 0 0-2.227-2.568H4.094Z" />
+                                        <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd" />
                                     </svg>
                                 </div>
-                                <div class="absolute top-3 right-9 text-xs font-medium">
-                                    9GB
+                                <div class="absolute top-3 right-5 text-xs font-medium">
+                                    @php
+                                        $size = $trashFolderSize; // Total size in bytes
+                                
+                                        // Convert bytes to human-readable format
+                                        if ($size >= 1073741824) {
+                                            $size = number_format($size / 1073741824, 2) . ' GB';
+                                        } elseif ($size >= 1048576) {
+                                            $size = number_format($size / 1048576, 2) . ' MB';
+                                        } elseif ($size >= 1024) {
+                                            $size = number_format($size / 1024, 2) . ' KB';
+                                        } else {
+                                            $size = $size . ' bytes';
+                                        }
+                                    @endphp
+                                    {{ $size }}
                                 </div>
                             </div>
                         </div>
@@ -319,5 +377,16 @@
         </div>
     </div>
 </body>
+
+<script>
+    window.Laravel = {
+        csrfToken: '{{ csrf_token() }}',
+        routes: {
+            upload: '{{ route("upload") }}',
+            uplodaCheck: '{{ route("upload.check") }}',
+        }
+    };
+</script>
+<script src="{{ asset('js/uploadFile.js') }}"></script>
 
 @endsection

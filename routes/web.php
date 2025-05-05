@@ -23,18 +23,20 @@ Route::get('/login', function () {
     return view('login');
 })->name('login');
 
-Route::get('/dashboard', function () {
-    return view('dashboard.main');
-})->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard.main');
+// })->name('dashboard');
 
 // Route::get('/documents', function () {
 //     return view('dashboard.documents');
 // })->name('documents');
 
+Route::get('/dashboard', [FileController::class, 'showDashboard'])->name('dashboard');
 Route::get('/documents/{folder?}', [FileController::class, 'showDocuments'])->name('documents')->where('folder', '.*');
+Route::get('/media/{folder?}', [FileController::class, 'showMedia'])->name('media')->where('folder', '.*');
 Route::get('/archive/{folder?}', [FileController::class, 'showArchive'])->name('archive')->where('folder', '.*');
+Route::get('/others/{folder?}', [FileController::class, 'showOthers'])->name('others')->where('folder', '.*');
 
-// Add this route for handling the file name update
 Route::post('/update-file-name', [FileController::class, 'updateFileName'])->name('update-file-name');
 
 Route::get('/trash/{folder?}', [FileController::class, 'showTrash'])->name('trash')->where('folder', '.*');
