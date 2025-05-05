@@ -192,7 +192,7 @@
                             </div>
                         </div>
 
-                        <div class="md:col-span-2 lg:col-span-2 lg:row-span-2 order-7 md:order-2 lg:order-5 place-items-center">
+                        {{-- <div class="md:col-span-2 lg:col-span-2 lg:row-span-2 order-7 md:order-2 lg:order-5 place-items-center">
                             <div class="bg-white flex flex-col rounded-xl w-full h-full p-5">
                                 <div class="font-medium text-md">Shared Files</div>
                                 <div class="flex items-center justify-between border-1 rounded-lg border-blue-400 p-2 mt-2">
@@ -259,24 +259,27 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 
-                        <div class="md:col-span-3 lg:col-span-2 lg:row-span-3 order-8 md:order-8 lg:order-6 place-items-center">
+                        <div class="md:col-span-3 lg:col-span-3 lg:row-span-3 order-8 md:order-8 lg:order-6 place-items-center">
                             <div class="flex flex-col w-full h-full">
                                 <div class="font-medium text-lg">Files</div>
                                 <div class="flex flex-col bg-white rounded-xl w-full h-full p-3">
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        @foreach($photos->chunk(1) as $column) <!-- Chunk images into sets of 4 -->
-                                            <div class="grid gap-4">
-                                                @foreach($column as $photo)
-                                                    <div>
-                                                        <!-- Display the image -->
-                                                        <img class="h-auto max-w-full rounded-lg" 
-                                                             src="{{ asset('storage/' . $photo) }}" alt="">
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        @endforeach
+                                        @if ($photos->isNotEmpty())
+                                            @foreach($photos->take(6)->chunk(1) as $column)
+                                                <div class="grid gap-4">
+                                                    @foreach($column as $photo)
+                                                        <div class="flex items-center">
+                                                            <!-- Display the image -->
+                                                            <img class="h-auto max-w-full rounded-lg cursor-pointer" ondblclick="window.open('{{ asset('storage/' . $photo) }}', '_blank')" src="{{ asset('storage/' . $photo) }}" alt="">
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <div>No Media</div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

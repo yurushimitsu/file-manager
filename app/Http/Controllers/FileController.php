@@ -44,6 +44,7 @@ class FileController extends Controller
             'docuFolderModified' => $docuFolderModified,
             'mediaFolderModified' => $mediaFolderModified,
             'archiveFolderModified' => $archiveFolderModified,
+            'trashFolderModified' => $trashFolderModified,
             'otherFolderModified' => $otherFolderModified,
         ]);
     }
