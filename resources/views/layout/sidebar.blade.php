@@ -23,7 +23,7 @@
             </a>
         </li>
         <li>
-            <a href="#" class="flex items-center justify-center p-2 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white {{ (Route::is('media')) ? 'bg-[#5BD0F4] text-white' : '' }} focus:outline-none focus:ring-2 focus:ring-gray-200 group">
+            <a href="{{ Route('media') }}" class="flex items-center justify-center p-2 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white {{ (Route::is('media')) ? 'bg-[#5BD0F4] text-white' : '' }} focus:outline-none focus:ring-2 focus:ring-gray-200 group">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-gray-500 group-hover:text-white {{ (Route::is('media')) ? 'text-white' : '' }}">
                     <path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd" />
                 </svg>
@@ -46,8 +46,8 @@
             </a>
         </li>
         <li>
-            <a href="#" class="flex items-center justify-center p-2 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-200 group">
-                <svg class="shrink-0 w-5 h-5 text-gray-500 group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
+            <a href="{{ Route('others') }}" class="flex items-center justify-center p-2 text-gray-900 rounded-xl hover:bg-[#5BD0F4] hover:text-white {{ (Route::is('others')) ? 'bg-[#5BD0F4] text-white' : '' }} focus:outline-none focus:ring-2 focus:ring-gray-200 group">
+                <svg class="shrink-0 w-5 h-5 text-gray-500 group-hover:text-white {{ (Route::is('others')) ? 'text-white' : '' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
                     <path d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z"/>
                 </svg>
             </a>
