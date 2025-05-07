@@ -56,7 +56,7 @@
                     <div id="profileDropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44">
                         <ul class="py-2 text-sm text-gray-700" aria-labelledby="profiletButton">
                             <li>
-                                <a href="" class="block px-4 py-2 hover:bg-gray-100">Account</a>
+                                <a href="{{ route('showChangePass') }}" class="block px-4 py-2 hover:bg-gray-100">Account</a>
                             </li>
                             <hr class="mx-3 text-gray-300">
                             <li>

@@ -24,6 +24,10 @@ Route::get('/', function () {
 // Route::get('/login', function () {
 //     return view('login');
 // })->name('login');
+
+Route::get('/change-password', [LoginController::class, 'showChangePass'])->name('showChangePass');
+Route::post('/change-password/post', [LoginController::class, 'postChangePass'])->name('postChangePass');
+
 Route::get('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/login/post', [LoginController::class, 'loginEmail'])->name('loginEmail');
 

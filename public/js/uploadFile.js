@@ -214,9 +214,9 @@ function proceedUpload(file, relativePath) {
         } else {
             Swal.close();
             Swal.fire({
-                icon: 'error',
+                icon: 'warning',
                 title: 'Upload Failed',
-                text: data.error || 'Something went wrong.',
+                text: data.message || 'Something went wrong.',
             });
         }
     })

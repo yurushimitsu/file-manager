@@ -30,6 +30,10 @@ class GoogleAuthController extends Controller
         if ($existingUser) {
             // Log the user in if they already exist
             Auth::login($existingUser);
+
+            if ($existingUser->new_user) {
+                return redirect()->route('showChangePass')->with('error', 'Please change your password before proceeding');
+            }
         } else {
             // Otherwise, create a new user and log them in
             $newUser = User::updateOrCreate([
@@ -37,10 +41,12 @@ class GoogleAuthController extends Controller
             ], [
                 'name' => $user->name,
                 'avatar' => $user->getAvatar(),
-                'password' => Hash::make('password'),
-                'email_verified_at' => now()
+                'password' => Hash::make(Str::random(16)),
+                'email_verified_at' => now(),
+                'new_user' => true
             ]);
             Auth::login($newUser);
+            return redirect()->route('showChangePass')->with('error', 'Please change your password before proceeding');
         }
 
         // Redirect the user to the dashboard or any other secure page

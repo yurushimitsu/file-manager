@@ -334,6 +334,24 @@ class FileController extends Controller
             'file' => 'required|file',
         ]);
         
+        $storageLimit = 10 * 1024 * 1024;
+
+        $currentStorageUsage = Storage::disk('public')->allFiles();
+        $totalSize = 0;
+
+        // Calculate the total size of all files in the public disk
+        foreach ($currentStorageUsage as $file) {
+            $totalSize += Storage::disk('public')->size($file);
+        }
+
+        // Check if the current storage usage exceeds the limit
+        if ($totalSize >= $storageLimit) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Storage limit reached. Cannot upload more files.',
+            ], 400);
+        }
+        
         $referrer = $request->headers->get('referer');
         $currentFolder = urldecode(parse_url($referrer, PHP_URL_PATH));
         
@@ -402,7 +420,7 @@ class FileController extends Controller
             'filename' => $fileName,
             'path' => $storedPath,
             'url' => Storage::url($storedPath),
-        ]);        
+        ]);
     }
 
     public function checkIfExists(Request $request) {
