@@ -21,7 +21,7 @@ class FileController extends Controller
         $trashFolderSize = $this->getFolderSize('public/trash');
         $otherFolderSize = $this->getFolderSize('public/others');
 
-        $totalStorage = 1024 * 1024 * 1024 * 1; // Last number is the allotted max size (GB)
+        $totalStorage = 1 * 1024 * 1024 * 1024; // First number is the allotted max size (GB)
         $usedStorage = $docuFolderSize + $mediaFolderSize + $archiveFolderSize + $trashFolderSize + $otherFolderSize;
         $usedPercentage = ($usedStorage / $totalStorage) * 100;
 
@@ -333,8 +333,8 @@ class FileController extends Controller
         $request->validate([
             'file' => 'required|file',
         ]);
-        
-        $storageLimit = 10 * 1024 * 1024;
+
+        $storageLimit = 1 * 1024 * 1024 * 1024;
 
         $currentStorageUsage = Storage::disk('public')->allFiles();
         $totalSize = 0;
