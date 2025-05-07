@@ -79,7 +79,7 @@
                     <div id="sortable-files" class="flex flex-wrap justify-center md:justify-start gap-5">
                         @if (!empty($directories) || !empty($files))
                             @foreach ($directories as $directory)
-                                <div class="folder-card grid-view grid grid-cols-1 content-between bg-white rounded-xl p-4 shadow-lg h-45 w-45 select-none cursor-pointer hover:bg-gray-50" data-id="{{ $directory }}" id="folder-{{ basename($directory) }}" ondblclick="window.location.href='{{ route('others', ['folder' => str_replace('public/others/', '', $directory)]) }}'" title="{{ basename($directory) }}">
+                                <div class="folder-card grid-view grid grid-cols-1 content-between bg-white rounded-xl p-4 shadow-lg h-45 w-45 select-none cursor-pointer hover:bg-gray-50" data-id="{{ $directory }}" id="folder-{{ basename($directory) }}" ondblclick="window.location.href='{{ route('others', ['folder' => str_replace('public/user/'.auth()->user()->id.'/others/', '', $directory)]) }}'" title="{{ basename($directory) }}">
                                     <div class="flex items-start justify-between">
                                         <div class="bg-[#C8EAFF] rounded-full p-3">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-[#0F52FF]">
@@ -96,16 +96,11 @@
                                                 <!-- Dropdown menu -->
                                                 <div id="docuDropdown-{{ $directory }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
                                                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="docuButton-{{ $directory }}">
-                                                        <li><a href="{{ route('others', ['folder' => str_replace('public/others/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
+                                                        <li><a href="{{ route('others', ['folder' => str_replace('public/user/'.auth()->user()->id.'/others/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
                                                         <li>
-                                                            {{-- <a href="{{ route('folders.download', ['folder' => str_replace('public/others/', '', $directory)]) }}"
-                                                               class="block px-4 py-2 hover:bg-gray-100"
-                                                               onclick="event.stopPropagation();">
-                                                               Download
-                                                            </a> --}}
                                                             <button 
                                                                 class="block px-4 py-2 hover:bg-gray-100 bg-transparent border-0 cursor-pointer"
-                                                                onclick="downloadFolder('{{ route('folders.download', ['folder' => str_replace('public/others/', '', $directory)]) }}');">
+                                                                onclick="downloadFolder('{{ route('folders.download', ['folder' => str_replace('public/user/'.auth()->user()->id.'/others/', '', $directory)]) }}');">
                                                                 Download
                                                             </button>
                                                         </li>
@@ -144,7 +139,7 @@
                                 </div>
                                 
                                 {{-- List View --}}
-                                <div class="folder-card list-view bg-white rounded-xl shadow-lg h-15 w-full select-none cursor-pointer hover:bg-gray-50 hidden" data-id="{{ $directory }}" id="folderList-{{ basename($directory) }}" ondblclick="window.location.href='{{ route('others', ['folder' => str_replace('public/others/', '', $directory)]) }}'" title="{{ basename($directory) }}">
+                                <div class="folder-card list-view bg-white rounded-xl shadow-lg h-15 w-full select-none cursor-pointer hover:bg-gray-50 hidden" data-id="{{ $directory }}" id="folderList-{{ basename($directory) }}" ondblclick="window.location.href='{{ route('others', ['folder' => str_replace('public/user/'.auth()->user()->id.'/others/', '', $directory)]) }}'" title="{{ basename($directory) }}">
                                     <div class="flex items-center justify-between p-3 h-full w-full">
                                         <div class="flex flex-row items-center min-w-0">
                                             <div class="bg-[#C8EAFF] rounded-full p-3 me-3">
@@ -187,11 +182,11 @@
                                                 <!-- Dropdown menu -->
                                                 <div id="docuDropdownList-{{ $directory }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
                                                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="docuButtonList-{{ $directory }}">
-                                                        <li><a href="{{ route('others', ['folder' => str_replace('public/others/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
+                                                        <li><a href="{{ route('others', ['folder' => str_replace('public/user/'.auth()->user()->id.'/others/', '', $directory)]) }}" class="block px-4 py-2 hover:bg-gray-100">Open</a></li>
                                                         <li>
                                                             <button 
                                                                 class="block px-4 py-2 hover:bg-gray-100 bg-transparent border-0 cursor-pointer"
-                                                                onclick="downloadFolder('{{ route('folders.download', ['folder' => str_replace('public/others/', '', $directory)]) }}');">
+                                                                onclick="downloadFolder('{{ route('folders.download', ['folder' => str_replace('public/user/'.auth()->user()->id.'/others/', '', $directory)]) }}');">
                                                                 Download
                                                             </button>
                                                         </li>

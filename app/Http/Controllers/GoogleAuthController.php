@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use Throwable;
@@ -46,6 +47,9 @@ class GoogleAuthController extends Controller
                 'new_user' => true
             ]);
             Auth::login($newUser);
+            Storage::makeDirectory('public/user/' . $newUser->id);
+            Storage::makeDirectory('public/user/' . $newUser->id . '/documents');
+
             return redirect()->route('showChangePass')->with('error', 'Please change your password before proceeding');
         }
 

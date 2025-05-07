@@ -13,23 +13,23 @@ class FileController extends Controller
 {
 
     public function showDashboard() {
-        $photos = collect(Storage::disk('public')->allFiles('media/Photos'));
+        $photos = collect(Storage::disk('public')->allFiles('user/'.auth()->user()->id.'/media/Photos'));
 
-        $docuFolderSize = $this->getFolderSize('public/documents');
-        $mediaFolderSize = $this->getFolderSize('public/media');
-        $archiveFolderSize = $this->getFolderSize('public/archive');
-        $trashFolderSize = $this->getFolderSize('public/trash');
-        $otherFolderSize = $this->getFolderSize('public/others');
+        $docuFolderSize = $this->getFolderSize('public/user/'.auth()->user()->id.'/documents');
+        $mediaFolderSize = $this->getFolderSize('public/user/'.auth()->user()->id.'/media');
+        $archiveFolderSize = $this->getFolderSize('public/user/'.auth()->user()->id.'/archive');
+        $trashFolderSize = $this->getFolderSize('public/user/'.auth()->user()->id.'/trash');
+        $otherFolderSize = $this->getFolderSize('public/user/'.auth()->user()->id.'/others');
 
         $totalStorage = 1 * 1024 * 1024 * 1024; // First number is the allotted max size (GB)
         $usedStorage = $docuFolderSize + $mediaFolderSize + $archiveFolderSize + $trashFolderSize + $otherFolderSize;
         $usedPercentage = ($usedStorage / $totalStorage) * 100;
 
-        $docuFolderModified = $this->getLastModifiedDate('documents');
-        $mediaFolderModified = $this->getLastModifiedDate('media');
-        $archiveFolderModified = $this->getLastModifiedDate('archive');
-        $trashFolderModified = $this->getLastModifiedDate('trash');
-        $otherFolderModified = $this->getLastModifiedDate('others');
+        $docuFolderModified = $this->getLastModifiedDate('user/'.auth()->user()->id.'/documents');
+        $mediaFolderModified = $this->getLastModifiedDate('user/'.auth()->user()->id.'/media');
+        $archiveFolderModified = $this->getLastModifiedDate('user/'.auth()->user()->id.'/archive');
+        $trashFolderModified = $this->getLastModifiedDate('user/'.auth()->user()->id.'/trash');
+        $otherFolderModified = $this->getLastModifiedDate('user/'.auth()->user()->id.'/others');
 
         return view('dashboard.main', [
             'usedStorage' => $this->formatBytes($usedStorage),
@@ -73,11 +73,11 @@ class FileController extends Controller
     }
 
     public function showDocuments($folder = null) {
-        if (!File::exists(storage_path('app/public/documents'))) {
-            File::makeDirectory(storage_path('app/public/documents'), 0755, true);
+        if (!File::exists(storage_path('app/public/user/'.auth()->user()->id.'/documents'))) {
+            File::makeDirectory(storage_path('app/public/user/'.auth()->user()->id.'/documents'), 0755, true);
         }
 
-        $basePath = 'public/documents';
+        $basePath = 'public/user/'.auth()->user()->id.'/documents';
 
         $docuFolderFileSize = $this->getFolderSize($basePath);
     
@@ -109,7 +109,7 @@ class FileController extends Controller
         $pathSegments = explode('/', trim($currentFolder, '/'));
         $firstFolder = $pathSegments[0] ?? '';
         
-        $folderPath = storage_path("app/public/{$firstFolder}/{$folder}");
+        $folderPath = storage_path("app/public/user/".auth()->user()->id."/{$firstFolder}/{$folder}");
         $zipDir = storage_path('app/temp');
         $folderName = basename($folder);
         $zipFileName = Str::slug($folderName) . '.zip';
@@ -173,8 +173,8 @@ class FileController extends Controller
         }
 
         // Get the full path of the old and new file names
-        $oldFilePath = 'public' . $currentFolder . '/' . $oldFileName;
-        $newFilePath = 'public' . $currentFolder . '/' . $newFileName;
+        $oldFilePath = 'public/user/' . auth()->user()->id . '/' . $currentFolder . '/' . $oldFileName;
+        $newFilePath = 'public/user/' . auth()->user()->id . '/' . $currentFolder . '/' . $newFileName;
 
         // Check if the file exists
         if (!Storage::exists($oldFilePath)) {
@@ -200,11 +200,11 @@ class FileController extends Controller
     }
 
     public function showMedia($folder = null) {
-        if (!File::exists(storage_path('app/public/media'))) {
-            File::makeDirectory(storage_path('app/public/media'), 0755, true);
+        if (!File::exists(storage_path('app/public/user/'.auth()->user()->id.'/media'))) {
+            File::makeDirectory(storage_path('app/public/user/'.auth()->user()->id.'/media'), 0755, true);
         }
 
-        $basePath = 'public/media';
+        $basePath = 'public/user/'.auth()->user()->id.'/media';
 
         $docuFolderFileSize = $this->getFolderSize($basePath);
     
@@ -229,11 +229,11 @@ class FileController extends Controller
     }
 
     public function showArchive($folder = null) {
-        if (!File::exists(storage_path('app/public/archive'))) {
-            File::makeDirectory(storage_path('app/public/archive'), 0755, true);
+        if (!File::exists(storage_path('app/public/user/'.auth()->user()->id.'/archive'))) {
+            File::makeDirectory(storage_path('app/public/user/'.auth()->user()->id.'/archive'), 0755, true);
         }
 
-        $basePath = 'public/archive';
+        $basePath = 'public/user/'.auth()->user()->id.'/archive';
 
         $docuFolderFileSize = $this->getFolderSize($basePath);
     
@@ -258,11 +258,11 @@ class FileController extends Controller
     }
 
     public function showOthers($folder = null) {
-        if (!File::exists(storage_path('app/public/others'))) {
-            File::makeDirectory(storage_path('app/public/others'), 0755, true);
+        if (!File::exists(storage_path('app/public/user/'.auth()->user()->id.'/others'))) {
+            File::makeDirectory(storage_path('app/public/user/'.auth()->user()->id.'/others'), 0755, true);
         }
 
-        $basePath = 'public/others';
+        $basePath = 'public/user/'.auth()->user()->id.'/others';
 
         $docuFolderFileSize = $this->getFolderSize($basePath);
     
@@ -289,11 +289,11 @@ class FileController extends Controller
     
 
     public function showTrash($folder = null) {
-        if (!File::exists(storage_path('app/public/trash'))) {
-            File::makeDirectory(storage_path('app/public/trash'), 0755, true);
+        if (!File::exists(storage_path('app/public/user/'.auth()->user()->id.'/trash'))) {
+            File::makeDirectory(storage_path('app/public/user/'.auth()->user()->id.'/trash'), 0755, true);
         }
 
-        $basePath = 'public/trash';
+        $basePath = 'public/user/'.auth()->user()->id.'/trash';
 
         $docuFolderFileSize = $this->getFolderSize($basePath);
     
@@ -336,7 +336,7 @@ class FileController extends Controller
 
         $storageLimit = 1 * 1024 * 1024 * 1024;
 
-        $currentStorageUsage = Storage::disk('public')->allFiles();
+        $currentStorageUsage = Storage::disk('public')->allFiles('user/'.auth()->user()->id);
         $totalSize = 0;
 
         // Calculate the total size of all files in the public disk
@@ -377,35 +377,35 @@ class FileController extends Controller
         
         if ($currentFolder === '/dashboard') {
             if (in_array($fileMimeType, $documentMimeTypes)) {
-                $storagePath = 'public/documents/' . dirname($relativePath);
+                $storagePath = 'public/user/'.auth()->user()->id.'/documents/' . dirname($relativePath);
             } elseif (in_array($fileMimeType, $mediaTypesPhotos)) {
-                $storagePath = 'public/media/Photos/' . dirname($relativePath);
+                $storagePath = 'public/user/'.auth()->user()->id.'/media/Photos/' . dirname($relativePath);
             } elseif (in_array($fileMimeType, $mediaTypesVideos)) {
-                $storagePath = 'public/media/Videos/' . dirname($relativePath);
+                $storagePath = 'public/user/'.auth()->user()->id.'/media/Videos/' . dirname($relativePath);
             } else {
                 // If the file is not a photo, video, or document, store it in the "other" folder
-                $storagePath = 'public/others/' . dirname($relativePath);
+                $storagePath = 'public/user/'.auth()->user()->id.'/others/' . dirname($relativePath);
             }
         } elseif ($currentFolder !== '/media') {
             if (in_array($fileMimeType, $mediaTypesPhotos)) {
-                $storagePath = 'public/media/Photos/' . dirname($relativePath);
+                $storagePath = 'public/user/'.auth()->user()->id.'/media/Photos/' . dirname($relativePath);
             } elseif (in_array($fileMimeType, $mediaTypesVideos)) {
-                $storagePath = 'public/media/Videos/' . dirname($relativePath);
+                $storagePath = 'public/user/'.auth()->user()->id.'/media/Videos/' . dirname($relativePath);
             } elseif (in_array($fileMimeType, $documentMimeTypes)) {
-                $storagePath = 'public/documents/' . dirname($relativePath);
+                $storagePath = 'public/user/'.auth()->user()->id.'/documents/' . dirname($relativePath);
             } else {
                 // If the file is not a photo, video, or document, store it in the "other" folder
-                $storagePath = 'public/others/' . dirname($relativePath);
+                $storagePath = 'public/user/'.auth()->user()->id.'/others/' . dirname($relativePath);
             }
         } else {
             if (in_array($fileMimeType, $documentMimeTypes)) {
-                $storagePath = 'public/documents/' . dirname($relativePath);
+                $storagePath = 'public/user/'.auth()->user()->id.'/documents/' . dirname($relativePath);
             } elseif (in_array($fileMimeType, $mediaTypesPhotos)) {
-                $storagePath = 'public/media/Photos/' . dirname($relativePath);
+                $storagePath = 'public/user/'.auth()->user()->id.'/media/Photos/' . dirname($relativePath);
             } elseif (in_array($fileMimeType, $mediaTypesVideos)) {
-                $storagePath = 'public/media/Videos/' . dirname($relativePath);
+                $storagePath = 'public/user/'.auth()->user()->id.'/media/Videos/' . dirname($relativePath);
             } else {
-                $storagePath = 'public/others/' . dirname($relativePath);
+                $storagePath = 'public/user/'.auth()->user()->id.'/others/' . dirname($relativePath);
             }
         }
         
@@ -431,9 +431,9 @@ class FileController extends Controller
 
         // If user uploaded in the dashboard
         if ($currentFolder == '/dashboard') {
-            $fullPath = 'public/documents/' . $relativePath;
+            $fullPath = 'public/user/'.auth()->user()->id.'/documents/' . $relativePath;
         } else {
-            $fullPath = 'public' . $currentFolder . '/' . $relativePath;
+            $fullPath = 'public/user/'.auth()->user()->id. '/' . $currentFolder . '/' . $relativePath;
         }
 
         return response()->json([
@@ -451,9 +451,9 @@ class FileController extends Controller
 
         $folderName = $request->input('folderName');        
         if ($currentFolder == '/dashboard') {
-            $path = storage_path('app/public/documents/' . $folderName);
+            $path = storage_path('app/public/user/'.auth()->user()->id.'/documents/' . $folderName);
         } else {
-            $path = storage_path('app/public'. $currentFolder . '/' . $folderName);
+            $path = storage_path('app/public/user/'.auth()->user()->id. '/' . $currentFolder . '/' . $folderName);
         }
 
         // Check if the folder already exists
@@ -478,16 +478,16 @@ class FileController extends Controller
         $isFolder = $request->input('isFolder');  // Is it a folder?
 
         // Define paths
-        $documentPath = 'public' . $currentFolder . '/' . $itemName;
-        $archivePath = 'public/archive/' . $itemName;
+        $documentPath = 'public/user/'.auth()->user()->id. '/' . $currentFolder . '/' . $itemName;
+        $archivePath = 'public/user/'.auth()->user()->id.'/archive/' . $itemName;
 
         // For file handling
         if (!$isFolder) {
             if (Storage::exists($documentPath)) {
                 try {
                     // Ensure the archive folder exists
-                    if (!File::exists(storage_path('app/public/archive'))) {
-                        File::makeDirectory(storage_path('app/public/archive'), 0755, true);
+                    if (!File::exists(storage_path('app/public/user/'.auth()->user()->id.'/archive'))) {
+                        File::makeDirectory(storage_path('app/public/user/'.auth()->user()->id.'/archive'), 0755, true);
                     }
 
                     // Move the file to archive
@@ -503,14 +503,14 @@ class FileController extends Controller
         }
         // For folder handling
         else {
-            $folderPath = storage_path('app/public' . $currentFolder . '/' . $itemName);
-            $folderArchivePath = storage_path('app/public/archive/' . $itemName);
+            $folderPath = storage_path('app/public/user/'.auth()->user()->id. '/' . $currentFolder . '/' . $itemName);
+            $folderArchivePath = storage_path('app/public/user/'.auth()->user()->id.'/archive/' . $itemName);
             
             if (File::isDirectory($folderPath)) {
                 try {
                     // Ensure the trash archive exists
-                    if (!File::exists(storage_path('app/public/archive'))) {
-                        File::makeDirectory(storage_path('app/public/archive'), 0755, true);
+                    if (!File::exists(storage_path('app/public/user/'.auth()->user()->id.'/archive'))) {
+                        File::makeDirectory(storage_path('app/public/user/'.auth()->user()->id.'/archive'), 0755, true);
                     }
 
                     // Move the folder to archive
@@ -537,16 +537,16 @@ class FileController extends Controller
         $isFolder = $request->input('isFolder');  // Is it a folder?
 
         // Define paths
-        $documentPath = 'public' . $currentFolder . '/' . $itemName;
-        $trashPath = 'public/trash/' . $itemName;
+        $documentPath = 'public/user/'.auth()->user()->id. '/' . $currentFolder . '/' . $itemName;
+        $trashPath = 'public/user/'.auth()->user()->id.'/trash/' . $itemName;
 
         // For file handling
         if (!$isFolder) {
             if (Storage::exists($documentPath)) {
                 try {
                     // Ensure the trash folder exists
-                    if (!File::exists(storage_path('app/public/trash'))) {
-                        File::makeDirectory(storage_path('app/public/trash'), 0755, true);
+                    if (!File::exists(storage_path('app/public/user/'.auth()->user()->id.'/trash'))) {
+                        File::makeDirectory(storage_path('app/public/user/'.auth()->user()->id.'/trash'), 0755, true);
                     }
 
                     // Move the file to trash
@@ -562,14 +562,14 @@ class FileController extends Controller
         }
         // For folder handling
         else {
-            $folderPath = storage_path('app/public' . $currentFolder . '/' . $itemName);
-            $folderTrashPath = storage_path('app/public/trash/' . $itemName);
+            $folderPath = storage_path('app/public/user/'.auth()->user()->id. '/' . $currentFolder . '/' . $itemName);
+            $folderTrashPath = storage_path('app/public/user/'.auth()->user()->id.'/trash/' . $itemName);
             
             if (File::isDirectory($folderPath)) {
                 try {
                     // Ensure the trash folder exists
-                    if (!File::exists(storage_path('app/public/trash'))) {
-                        File::makeDirectory(storage_path('app/public/trash'), 0755, true);
+                    if (!File::exists(storage_path('app/public/user/'.auth()->user()->id.'/trash'))) {
+                        File::makeDirectory(storage_path('app/public/user/'.auth()->user()->id.'/trash'), 0755, true);
                     }
 
                     // Move the folder to trash
@@ -607,7 +607,7 @@ class FileController extends Controller
         $mediaTypesPhotos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         $mediaTypesVideos = ['video/mp4', 'video/avi', 'video/mkv', 'video/webm', 'video/x-matroska'];
 
-        $trashPath = 'public' . $currentFolder . '/' . $itemName;
+        $trashPath = 'public/user/'.auth()->user()->id. '/' . $currentFolder . '/' . $itemName;
 
         // === FILE RESTORE ===
         if (!$isFolder) {
@@ -617,13 +617,13 @@ class FileController extends Controller
 
                 // Determine restore path based on MIME type
                 if (in_array($mimeType, $documentMimeTypes)) {
-                    $restorePath = 'public/documents/' . $itemName;
+                    $restorePath = 'public/user/'.auth()->user()->id.'/documents/' . $itemName;
                 } elseif (in_array($mimeType, $mediaTypesPhotos)) {
-                    $restorePath = 'public/media/Photos/' . $itemName;
+                    $restorePath = 'public/user/'.auth()->user()->id.'/media/Photos/' . $itemName;
                 } elseif (in_array($mimeType, $mediaTypesVideos)) {
-                    $restorePath = 'public/media/Videos/' . $itemName;
+                    $restorePath = 'public/user/'.auth()->user()->id.'/media/Videos/' . $itemName;
                 } else {
-                    $restorePath = 'public/others/' . $itemName;
+                    $restorePath = 'public/user/'.auth()->user()->id.'/others/' . $itemName;
                 }
 
                 // Ensure destination directory exists
@@ -643,7 +643,7 @@ class FileController extends Controller
 
         // === FOLDER RESTORE ===
         else {
-            $folderPath = storage_path('app/public' . $currentFolder . '/' . $itemName);
+            $folderPath = storage_path('app/public/user/'.auth()->user()->id. '/' . $currentFolder . '/' . $itemName);
             $files = File::allFiles($folderPath);
 
             if (count($files) > 0) {
@@ -652,17 +652,17 @@ class FileController extends Controller
 
                 // Determine restore path based on MIME type of first file
                 if (in_array($mimeType, $documentMimeTypes)) {
-                    $restorePath = 'public/documents/' . $itemName;
+                    $restorePath = 'public/user/'.auth()->user()->id.'/documents/' . $itemName;
                 } elseif (in_array($mimeType, $mediaTypesPhotos)) {
-                    $restorePath = 'public/media/Photos/' . $itemName;
+                    $restorePath = 'public/user/'.auth()->user()->id.'/media/Photos/' . $itemName;
                 } elseif (in_array($mimeType, $mediaTypesVideos)) {
-                    $restorePath = 'public/media/Videos/' . $itemName;
+                    $restorePath = 'public/user/'.auth()->user()->id.'/media/Videos/' . $itemName;
                 } else {
-                    $restorePath = 'public/others/' . $itemName;
+                    $restorePath = 'public/user/'.auth()->user()->id.'/others/' . $itemName;
                 }
             } else {
                 // Folder is empty, send to "others"
-                $restorePath = 'public/others/' . $itemName;
+                $restorePath = 'public/user/'.auth()->user()->id.'/others/' . $itemName;
             }
 
             try {
@@ -696,7 +696,7 @@ class FileController extends Controller
         $isEmpty = $request->input('isEmpty'); // true/false
 
         if ($isEmpty) {
-            $trashPath = storage_path('app/public/trash');
+            $trashPath = storage_path('app/public/user/'.auth()->user()->id.'/trash');
     
             try {
                 if (File::exists($trashPath)) {
@@ -712,7 +712,7 @@ class FileController extends Controller
         }
 
         // Full relative path to the item
-        $relativePath = 'public' . $currentFolder . '/' . $itemName;
+        $relativePath = 'public/user/'.auth()->user()->id. '/' . $currentFolder . '/' . $itemName;
 
         try {
             if ($isFolder) {
