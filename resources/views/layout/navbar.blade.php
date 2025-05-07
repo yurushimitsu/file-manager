@@ -1,8 +1,8 @@
 <nav class="p-5 fixed items-center inset-x-0 top-0 z-50 bg-white">
     <div class="flex flex-wrap items-center justify-between mx-auto">
-        <div href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
+        <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
             <img src="{{ asset('img/Logo.png') }}" class="h-10" alt="Logo" />
-        </div>
+        </a>
         <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-[#1556FF] rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="navbar-default" aria-expanded="false">
             <span class="sr-only">Open main menu</span>
             <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
@@ -47,10 +47,10 @@
                         </ul>
                     </div>
                     <button id="profiletButton"  type="button" data-dropdown-toggle="profileDropdown" class="bg-transparent px-2 hover:text-blue-400 cursor-pointer text-center inline-flex items-center">
-                        <div class="w-10 h-10 overflow-hidden bg-gray-100 rounded-full me-3">
-                            <img src="{{ asset('img/login-pic.png') }}" alt="profile-pic">
+                        <div class="w-9 h-9 overflow-hidden bg-gray-100 rounded-full me-3">
+                            <img src="{{ auth()->user()->avatar }}" alt="profile-pic">
                         </div>
-                        Name
+                        {{ strtok(auth()->user()->name, ' '); }}
                     </button>
                     <!-- Dropdown menu -->
                     <div id="profileDropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44">
@@ -60,7 +60,7 @@
                             </li>
                             <hr class="mx-3 text-gray-300">
                             <li>
-                                <a href="{{ route('login') }}" class="block px-4 py-2 hover:bg-gray-100">Logout</a>
+                                <a href="{{ route('logout') }}" class="block px-4 py-2 hover:bg-gray-100">Logout</a>
                             </li>
                         </ul>
                     </div>

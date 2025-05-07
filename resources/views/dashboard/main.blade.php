@@ -52,7 +52,7 @@
                             </svg>                              
                         </div>
                     </div>
-                    <div class="grid grid-flow-row lg:grid-rows-4 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <div class="grid grid-flow-row lg:grid-rows-{{$photos->isNotEmpty() ? '4' : '3'}} md:grid-cols-3 lg:grid-cols-5 gap-4">
                         <div class="md:col-span-1 lg:col-span-2 lg:row-span-1 order-1 md:order-1 lg:order-1 place-items-center">
                             <div class="flex items-center justify-center bg-[#9CCBFF] rounded-xl shadow-lg w-full h-full">
                                 <div class="flex flex-col lg:flex-row items-center justify-center text-gray-900 text-xs py-4">
@@ -261,7 +261,7 @@
                             </div>
                         </div> --}}
 
-                        <div class="md:col-span-3 lg:col-span-3 lg:row-span-3 order-8 md:order-8 lg:order-6 place-items-center">
+                        <div class="md:col-span-3 lg:col-span-3 lg:row-span-{{$photos->isNotEmpty() ? '3' : '2'}} order-8 md:order-8 lg:order-6 place-items-center">
                             <div class="flex flex-col w-full h-full">
                                 <div class="font-medium text-lg">Files</div>
                                 <div class="flex flex-col bg-white rounded-xl w-full h-full p-3">
