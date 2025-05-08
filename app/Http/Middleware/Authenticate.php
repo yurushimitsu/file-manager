@@ -2,20 +2,16 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
+use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class Authenticate
+class Authenticate extends Middleware
 {
     /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
+     * Get the path the user should be redirected to when they are not authenticated.
      */
-    public function handle(Request $request, Closure $next)
+    protected function redirectTo(Request $request)
     {
         // If the user is not authenticated, redirect to login page
         if (!Auth::check()) {
@@ -29,8 +25,5 @@ class Authenticate
         if ($user->new_user) {
             return redirect()->route('showChangePass')->with('error', 'Please change your password before proceeding');
         }
-
-        // If the user is authenticated and is not a new user, proceed with the request
-        return $next($request);
     }
 }
