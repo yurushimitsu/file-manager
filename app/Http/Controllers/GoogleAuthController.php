@@ -44,11 +44,11 @@ class GoogleAuthController extends Controller
                 'avatar' => $user->getAvatar(),
                 'password' => Hash::make(Str::random(16)),
                 'email_verified_at' => now(),
-                'new_user' => true
+                'new_user' => true,
+                'storage_gb' => 1,
             ]);
             Auth::login($newUser);
             Storage::makeDirectory('public/user/' . $newUser->id);
-            Storage::makeDirectory('public/user/' . $newUser->id . '/documents');
 
             return redirect()->route('showChangePass')->with('error', 'Please change your password before proceeding');
         }

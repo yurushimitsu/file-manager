@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('avatar')->nullable();
             $table->boolean('new_user')->default(true);
+            $table->tinyInteger('storage_gb')->default(1);
             $table->rememberToken();
             $table->timestamps();
         });
