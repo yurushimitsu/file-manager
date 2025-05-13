@@ -366,26 +366,4 @@
 <script src="{{ asset('js/uploadFile.js') }}"></script>
 <script src="{{ asset('js/move.js') }}"></script>
 
-<script>
-    // Initialize SortableJS for dragging and dropping
-    const sortable = new Sortable(document.getElementById('sortable-files'), {
-        group: 'files-and-folders',  // Define the group for drag-and-drop
-        animation: 150,  // Animation duration when dragging
-        // onEnd(evt) {
-        //     const movedItem = evt.item;  // Get the moved item
-        //     const originalIndex = evt.from.children; // Get the original index
-        //     const newIndex = evt.to.children; // Get the new index
-            
-        //     // Optionally, you can trigger a POST request to save the change to the backend
-        //     const id = movedItem.getAttribute('data-id');
-        //     const newParentId = evt.to.getAttribute('id');
-            
-        //     // Perform backend action (e.g., move the file/folder) using AJAX/fetch
-        //     moveItemToNewLocation(id, newParentId);
-        // }
-    });
-
-    
-</script>
-
 @endsection
