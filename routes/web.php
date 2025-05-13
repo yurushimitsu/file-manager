@@ -22,12 +22,8 @@ use Illuminate\Support\Facades\File;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('login');
 });
-
-// Route::get('/login', function () {
-//     return view('login');
-// })->name('login');
 
 Route::get('/change-password', [LoginController::class, 'showChangePass'])->name('showChangePass');
 Route::post('/change-password/post', [LoginController::class, 'postChangePass'])->name('postChangePass');
