@@ -46,6 +46,10 @@
                             </li>
                         </ul>
                     </div>
+                    <input type="file" id="fileInput" multiple class="hidden">
+<input type="file" id="folderInput" webkitdirectory directory multiple class="hidden">
+
+
                     <button id="profiletButton"  type="button" data-dropdown-toggle="profileDropdown" class="bg-transparent px-2 hover:text-blue-400 cursor-pointer text-center inline-flex items-center">
                         <div class="w-9 h-9 overflow-hidden bg-gray-100 rounded-full me-3">
                             <img src="{{ auth()->user()->avatar }}" alt="profile-pic">
