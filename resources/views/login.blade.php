@@ -18,7 +18,7 @@
                         </a>
                         <div class="relative items-center justify-center w-full">
                             <hr class="h-px my-5 bg-gray-400 border-0">
-                            <span class="absolute px-3 font-medium text-gray-400 -translate-x-1/2 -translate-y-1/2 bg-white left-1/2 top-1/2">or Log in with Email</span>
+                            <span class="absolute text-center w-45 px-3 font-medium text-gray-400 -translate-x-1/2 -translate-y-1/2 bg-white left-1/2 top-1/2">or Log in with Email</span>
                         </div>
                         <form class="w-full" action="{{ route('loginEmail') }}" method="POST">
                             @csrf
