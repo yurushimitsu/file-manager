@@ -3,7 +3,7 @@
 @section('body')
 
 <body class="bg-[#C8EAFF]">
-    <div class="flex h-screen items-center justify-center p-10">
+    <div class="flex h-screen items-center justify-center p-5">
         <div class="bg-white w-4xl rounded-4xl shadow-lg">
             <div class="flex flex-row">
                 <div class="w-full md:w-1/2 items-center p-10">
