@@ -2,6 +2,8 @@ const dropZone = document.getElementById('drop-zone');
 const dragOverlay = document.getElementById('drag-overlay');
 const fileUploadButton = document.getElementById('fileUploadButton');
 const folderUploadButton = document.getElementById('folderUploadButton');
+const fileInput = document.getElementById('fileInput');
+const folderInput = document.getElementById('folderInput');
 const closeUpload = document.getElementById('closeUpload');
 
 let isUploading = false;  // Flag to prevent multiple SweetAlerts
@@ -24,12 +26,136 @@ dropZone.addEventListener('dragleave', (e) => {
 fileUploadButton.addEventListener('click', (e) => {
     e.preventDefault();
     dragOverlay.classList.remove('hidden');
+    fileInput.click();
 });
 
 folderUploadButton.addEventListener('click', (e) => {
     e.preventDefault();
     dragOverlay.classList.remove('hidden');
+    folderInput.click();
 });
+
+fileInput.addEventListener('change', (e) => {
+    handleFileInputUpload(e.target.files);
+    e.target.value = '';
+});
+
+folderInput.addEventListener('change', (e) => {
+    handleFolderInputUpload(e.target.files);
+    e.target.value = '';
+});
+
+function handleFileInputUpload(fileList) {
+    dragOverlay.classList.add('hidden');
+
+    const folderNames = new Set();
+    existingFiles = [];
+    newFiles = [];
+    filesToUpload = 0;
+    filesUploaded = 0;
+
+    const entries = Array.from(fileList).map(file => ({
+        isFile: true,
+        isDirectory: false,
+        name: file.name,
+        file: (cb) => {
+            file.relativePath = file.name;
+            cb(file);
+        }
+    }));
+
+    for (const entry of entries) {
+        countFilesInItem(entry);
+    }
+
+    for (const entry of entries) {
+        traverseFileTree(entry, folderNames);
+    }
+}
+
+function handleFolderInputUpload(fileList) {
+    dragOverlay.classList.add('hidden');
+
+    const folderNames = new Set();
+    existingFiles = [];
+    newFiles = [];
+    filesToUpload = 0;
+    filesUploaded = 0;
+
+    const entries = [];
+
+    // Group files by directory path
+    const pathMap = {};
+
+    Array.from(fileList).forEach(file => {
+        const fullPath = file.webkitRelativePath || file.name;
+        const parts = fullPath.split('/');
+        const fileName = parts.pop();
+        const dirPath = parts.join('/');
+
+        if (!pathMap[dirPath]) {
+            pathMap[dirPath] = [];
+        }
+
+        pathMap[dirPath].push({ file, fullPath, fileName });
+    });
+
+    function buildDirectoryEntry(path) {
+        return {
+            isDirectory: true,
+            isFile: false,
+            name: path.split('/').pop(),
+            createReader: () => ({
+                readEntries: (cb) => {
+                    const subDirs = new Set();
+                    const children = [];
+
+                    Object.keys(pathMap).forEach(dir => {
+                        if (dir.startsWith(path + '/') || dir === path) {
+                            const relative = dir.slice(path.length + 1).split('/')[0];
+                            if (relative && !subDirs.has(relative)) {
+                                subDirs.add(relative);
+                                children.push(buildDirectoryEntry(path + '/' + relative));
+                            }
+                        }
+                    });
+
+                    (pathMap[path] || []).forEach(({ file, fullPath, fileName }) => {
+                        children.push({
+                            isFile: true,
+                            isDirectory: false,
+                            name: fileName,
+                            file: (cb) => {
+                                file.relativePath = fullPath;
+                                cb(file);
+                            }
+                        });
+                    });
+
+                    cb(children);
+                }
+            })
+        };
+    }
+
+    const topLevelDirs = new Set();
+    Object.keys(pathMap).forEach(dir => {
+        const top = dir.split('/')[0];
+        if (top) topLevelDirs.add(top);
+    });
+
+    for (const dir of topLevelDirs) {
+        entries.push(buildDirectoryEntry(dir));
+    }
+
+    for (const entry of entries) {
+        countFilesInItem(entry);
+    }
+
+    for (const entry of entries) {
+        traverseFileTree(entry, folderNames);
+    }
+}
 
 closeUpload.addEventListener('click', (e) => {
     e.preventDefault();
