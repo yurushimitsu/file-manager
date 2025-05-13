@@ -272,7 +272,7 @@
                                                     @foreach($column as $photo)
                                                         <div class="flex items-center">
                                                             <!-- Display the image -->
-                                                            <img class="h-auto max-w-full rounded-lg cursor-pointer" ondblclick="window.open('{{ asset('storage/' . $photo) }}', '_blank')" src="{{ asset('storage/' . $photo) }}" alt="">
+                                                            <img class="h-auto max-w-full rounded-lg cursor-pointer" ondblclick="window.open('{{ url('show/' . preg_replace('/^public\//', '', $photo)) }}', '_blank')" src="{{ asset('storage/' . $photo) }}" alt="">
                                                         </div>
                                                     @endforeach
                                                 </div>

@@ -6,6 +6,10 @@ use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
+
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\File;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -42,6 +46,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/archive/{folder?}', [FileController::class, 'showArchive'])->name('archive')->where('folder', '.*');
     Route::get('/others/{folder?}', [FileController::class, 'showOthers'])->name('others')->where('folder', '.*');
 
+    Route::get('/show/{path}', [FileController::class, 'showFile'])->where('path', '.*');
+
     Route::post('/update-file-name', [FileController::class, 'updateFileName'])->name('update-file-name');
 
     Route::get('/trash/{folder?}', [FileController::class, 'showTrash'])->name('trash')->where('folder', '.*');
@@ -58,4 +64,3 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/restore-files', [FileController::class, 'restoreFiles'])->name('restoreFiles');
     Route::post('/delete-files', [FileController::class, 'deleteFile'])->name('deleteFile');
 });
-
