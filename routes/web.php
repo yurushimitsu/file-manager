@@ -47,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/others/{folder?}', [FileController::class, 'showOthers'])->name('others')->where('folder', '.*');
 
     Route::get('/show/{path}', [FileController::class, 'showFile'])->where('path', '.*');
+    Route::get('/storage-files/{path}',[FileController::class, 'showImage'])->where('path', '.*');
 
     Route::post('/update-file-name', [FileController::class, 'updateFileName'])->name('update-file-name');
 

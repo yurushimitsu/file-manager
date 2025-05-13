@@ -335,6 +335,16 @@ class FileController extends Controller
         return response($contents, 200)->header('Content-Type', $mimeType);
     }
 
+    public function showImage($path) {
+        $file = storage_path('app/public/' . $path);
+
+        if (!file_exists($file)) {
+            abort(404);
+        }
+
+        return Response::file($file);
+    }
+
     public function getFolderSize($directory) {
         $totalSize = 0;
         $files = Storage::allFiles($directory);
