@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use ZipArchive;
@@ -317,6 +318,22 @@ class FileController extends Controller
         return view('dashboard.trash', compact('files', 'directories', 'folderSizes', 'folderExploded', 'currentFolder', 'docuFolderFileSize'));
     }
 
+    public function showFile($path) {
+        if (!auth()->check()) {
+            abort(403);
+        }
+
+        $filePath = storage_path('app/public/' . $path);
+
+        if (!File::exists($filePath)) {
+            abort(404);
+        }
+
+        $mimeType = File::mimeType($filePath);
+        $contents = File::get($filePath);
+
+        return response($contents, 200)->header('Content-Type', $mimeType);
+    }
 
     public function getFolderSize($directory) {
         $totalSize = 0;

@@ -199,7 +199,7 @@
                             @endforeach
 
                             @foreach ($files as $index => $file)
-                                <div class="file-card grid-view grid grid-cols-1 bg-white rounded-xl p-4 shadow-lg h-45 w-45 select-none cursor-pointer hover:bg-gray-50" data-id="{{ $file }}" id="file-{{ basename($file) }}" ondblclick="window.open('{{ Storage::url($file) }}', '_blank')" title="{{ basename($file) }}">
+                                <div class="file-card grid-view grid grid-cols-1 bg-white rounded-xl p-4 shadow-lg h-45 w-45 select-none cursor-pointer hover:bg-gray-50" data-id="{{ $file }}" id="file-{{ basename($file) }}" ondblclick="window.open('{{ url('show/' . preg_replace('/^public\//', '', $file)) }}', '_blank')" title="{{ basename($file) }}">
                                     <div class="flex items-start justify-between">
                                         <div class="bg-[#C8EAFF] rounded-full p-3">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-orange-500">
@@ -218,7 +218,7 @@
                                                 <div id="docuDropdown-{{ $index }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
                                                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="docuButton-{{ $index }}">
                                                         <li>
-                                                            <a href="{{ Storage::url($file) }}" target="_blank" class="block px-4 py-2 hover:bg-gray-100">Download</a>
+                                                            <a href="{{ url('show/' . preg_replace('/^public\//', '', $file)) }}" target="_blank" class="block px-4 py-2 hover:bg-gray-100">Download</a>
                                                         </li>
                                                         <li>
                                                             <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="restoreFiles('{{ basename($file) }}', false)">Restore</button>
@@ -264,7 +264,7 @@
                                 </div>
 
                                 {{-- List View --}}
-                                <div class="file-card list-view bg-white rounded-xl shadow-lg h-15 w-full select-none cursor-pointer hover:bg-gray-50 hidden" data-id="{{ $file }}" id="fileList-{{ basename($file) }}" ondblclick="window.open('{{ Storage::url($file) }}', '_blank')" title="{{ basename($file) }}">
+                                <div class="file-card list-view bg-white rounded-xl shadow-lg h-15 w-full select-none cursor-pointer hover:bg-gray-50 hidden" data-id="{{ $file }}" id="fileList-{{ basename($file) }}" ondblclick="window.open('{{ url('show/' . preg_replace('/^public\//', '', $file)) }}', '_blank')" title="{{ basename($file) }}">
                                     <div class="flex items-center justify-between p-3 h-full w-full">
                                         <div class="flex flex-row items-center min-w-0">
                                             <div class="bg-[#C8EAFF] rounded-full p-3 me-3">
@@ -296,7 +296,7 @@
                                                 <div id="docuDropdownList-{{ $index }}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
                                                     <ul class="py-2 text-sm text-gray-700" aria-labelledby="docuButtonList-{{ $index }}">
                                                         <li>
-                                                            <a href="{{ Storage::url($file) }}" target="_blank" class="block px-4 py-2 hover:bg-gray-100">Download</a>
+                                                            <a href="{{ url('show/' . preg_replace('/^public\//', '', $file)) }}" target="_blank" class="block px-4 py-2 hover:bg-gray-100">Download</a>
                                                         </li>
                                                         <li>
                                                             <button type="button" class="block px-4 py-2 cursor-pointer hover:bg-gray-100 text-start w-full" onclick="restoreFiles('{{ basename($file) }}', false)">Restore</button>
