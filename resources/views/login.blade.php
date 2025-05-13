@@ -8,7 +8,7 @@
             <div class="flex flex-row">
                 <div class="w-full md:w-1/2 items-center p-10">
                     <div class="flex flex-col h-full items-center justify-center">
-                        <img src="{{ asset('img/logo.png') }}" class="h-10 w-30 mb-3" alt="logo">
+                        <img src="{{ asset('img/Logo.png') }}" class="h-10 w-30 mb-3" alt="logo">
                         <div class="text-2xl font-medium mb-3">
                             Welcome
                         </div>
