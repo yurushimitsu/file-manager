@@ -1,6 +1,6 @@
 @extends('layout.master')
 
-@section('title', 'Others')
+@section('title', 'File Manager | Others')
 
 @section('body')
 

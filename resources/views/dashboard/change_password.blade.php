@@ -1,6 +1,6 @@
 @extends('layout.master')
 
-@section('title', 'Change password')
+@section('title', 'File Manager | Change password')
 
 @section('body')
 
